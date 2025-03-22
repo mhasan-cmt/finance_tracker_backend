@@ -6,7 +6,7 @@ The **Personal Finance Tracker** is an Android application designed to help user
 This project is being developed as part of our **Software Development** course.
 
 ## Features
-- **User Authentication** (JWT)
+- **User Authentication** (JWT, Spring Security, Email verification with resend OTP feature)
 - **Expense & Income Tracking**
 - **Budgeting & Savings Management**
 - **AI-Based Financial Insights & Forecasting**
