@@ -1,0 +1,2 @@
+INSERT INTO transaction_type (transaction_type_id, transaction_type_name) VALUES (1,'TYPE_EXPENSE');
+INSERT INTO transaction_type (transaction_type_id, transaction_type_name) VALUES (2, 'TYPE_INCOME');
