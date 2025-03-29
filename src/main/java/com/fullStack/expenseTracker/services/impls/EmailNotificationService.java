@@ -26,7 +26,7 @@ public class EmailNotificationService implements NotificationService {
     public void sendUserRegistrationVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
         String toAddress = user.getEmail();
         String fromAddress = fromMail;
-        String senderName = "Company";
+        String senderName = "Fitrack";
         String subject = "Please verify your registration";
         String content = "Dear " + user.getUsername() + ",<br><br>"
                 + "<p>Thank you for joining us! We are glad to have you on board.</p><br>"
@@ -34,7 +34,7 @@ public class EmailNotificationService implements NotificationService {
                 + "<p>verification code: <strong>" + user.getVerificationCode() + "</strong></p><br>"
                 + "<p><strong>Please note that the above verification code will be expired within 15 minutes.</strong></p>"
                 + "<br>Thank you,<br>"
-                + "Your company name.";
+                + "Fitrack.";
 
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -52,14 +52,14 @@ public class EmailNotificationService implements NotificationService {
     public void sendForgotPasswordVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
         String toAddress = user.getEmail();
         String fromAddress = fromMail;
-        String senderName = "Company";
+        String senderName = "Fitrack";
         String subject = "Forgot password - Please verify your Account";
         String content = "Dear " + user.getUsername() + ",<br><br>"
                 + "<p>To change your password, enter the verification code in your device.</p><br>"
                 + "<p>verification code: <strong>" + user.getVerificationCode() + "</strong></p><br>"
                 + "<p><strong>Please note that the above verification code will be expired within 15 minutes.</strong></p>"
                 + "<br>Thank you,<br>"
-                + "Your company name.";
+                + "Fitrack.";
 
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
