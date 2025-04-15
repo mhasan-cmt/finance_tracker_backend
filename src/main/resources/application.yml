@@ -5,7 +5,7 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    url: ${DB_URL}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   mail:
