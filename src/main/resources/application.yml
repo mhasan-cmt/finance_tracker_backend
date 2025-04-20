@@ -27,7 +27,7 @@ spring:
 app:
   jwtSecret: ======================expense=tracker=mywallet===========================
   jwtExpirationMs: 86400000
-  verificationCodeExpirationMs: 60000
+  verificationCodeExpirationMs: 900000
   user:
     profile:
       upload:

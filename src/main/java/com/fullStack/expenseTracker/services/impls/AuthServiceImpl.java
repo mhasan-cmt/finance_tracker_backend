@@ -197,7 +197,7 @@ public class AuthServiceImpl implements AuthService {
                 if (user.getVerificationCode() != null) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN)
                             .body(new ApiResponseDto<>(ApiResponseStatus.FAILED, HttpStatus.FORBIDDEN,
-                                    "Verification not completed!"));
+                                    "You did not verified your Account. Please try again later!"));
                 }
 
                 user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
