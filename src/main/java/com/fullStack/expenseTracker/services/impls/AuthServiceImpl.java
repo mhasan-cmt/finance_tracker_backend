@@ -201,6 +201,38 @@ public class AuthServiceImpl implements AuthService {
         throw new UserNotFoundException("User not found with email " + resetPasswordDto.getEmail());
     }
 
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> resetForgotPassword(ResetPasswordRequestDto resetPasswordDto)
+            throws UserNotFoundException, UserServiceLogicException {
+
+        if (userService.existsByEmail(resetPasswordDto.getEmail())) {
+            try {
+                User user = userService.findByEmail(resetPasswordDto.getEmail());
+
+                if (user.getVerificationCode() != null) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(new ApiResponseDto<>(ApiResponseStatus.FAILED, HttpStatus.FORBIDDEN,
+                                    "Verification not completed!"));
+                }
+
+                user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+                userRepository.save(user);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
+                        ApiResponseStatus.SUCCESS,
+                        HttpStatus.CREATED,
+                        "Reset successful: Password has been successfully reset!"
+                ));
+            } catch (Exception e) {
+                log.error("Resetting password failed: {}", e.getMessage());
+                throw new UserServiceLogicException("Failed to reset your password: Try again later!");
+            }
+        }
+
+        throw new UserNotFoundException("User not found with email " + resetPasswordDto.getEmail());
+    }
+
+
     private User createUser(SignUpRequestDto signUpRequestDto) throws RoleNotFoundException {
         return new User(
                 signUpRequestDto.userName(),

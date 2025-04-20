@@ -26,4 +26,6 @@ public interface AuthService {
 
     ResponseEntity<ApiResponseDto<?>> resetPassword(ResetPasswordRequestDto resetPasswordDto) throws UserNotFoundException, UserServiceLogicException;
 
+    ResponseEntity<ApiResponseDto<?>> resetForgotPassword(ResetPasswordRequestDto resetPasswordDto) throws UserNotFoundException, UserServiceLogicException;
+
 }

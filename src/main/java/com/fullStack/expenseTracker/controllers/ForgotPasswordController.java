@@ -36,7 +36,7 @@ public class ForgotPasswordController {
     @PostMapping("/resetPassword")
     public ResponseEntity<ApiResponseDto<?>> resetPassword(@RequestBody @Valid ResetPasswordRequestDto resetPasswordDto)
             throws UserNotFoundException, UserServiceLogicException {
-        return authService.resetPassword(resetPasswordDto);
+        return authService.resetForgotPassword(resetPasswordDto);
     }
 
     @GetMapping("/resendEmail")
