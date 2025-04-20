@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -73,12 +74,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UserVerificationFailedException("Verification failed: invalid verification code!");
         }
 
-        long currentTimeInMs = System.currentTimeMillis();
-        long codeExpiryTimeInMillis = user.getVerificationCodeExpiryTime().getTime();
-
-        if (currentTimeInMs > codeExpiryTimeInMillis) {
-            throw new UserVerificationFailedException("Verification failed: expired verification code!");
-        }
+        validateVerificationCode(user);
 
         user.setVerificationCode(null);
         user.setVerificationCodeExpiryTime(null);
@@ -141,18 +137,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<ApiResponseDto<?>> verifyForgotPasswordVerification(String code) throws UserVerificationFailedException, UserServiceLogicException {
         User user = userRepository.findByVerificationCode(code);
-
-        if (user == null) {
-            throw new UserVerificationFailedException("Verification failed: invalid verification code!");
-        }
-
-        long currentTimeInMs = System.currentTimeMillis();
-        long codeExpiryTimeInMillis = user.getVerificationCodeExpiryTime().getTime();
-
-        if (currentTimeInMs > codeExpiryTimeInMillis) {
-            throw new UserVerificationFailedException("Verification failed: expired verification code!");
-        }
-
+        validateVerificationCode(user);
         try {
 
             user.setVerificationCode(null);
@@ -246,7 +231,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String generateVerificationCode() {
-        return String.valueOf((int) (Math.random() * 1000000));
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 6);
     }
 
     private Date calculateCodeExpirationTime() {
@@ -265,6 +250,16 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         return roles;
+    }
+
+    private void validateVerificationCode(User user) throws UserVerificationFailedException {
+        if (user == null || user.getVerificationCodeExpiryTime() == null) {
+            throw new UserVerificationFailedException("Invalid verification state!");
+        }
+
+        if (System.currentTimeMillis() > user.getVerificationCodeExpiryTime().getTime()) {
+            throw new UserVerificationFailedException("Verification failed: expired verification code!");
+        }
     }
 
 
