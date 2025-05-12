@@ -11,6 +11,7 @@ import com.fullStack.expenseTracker.exceptions.UserNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserServiceLogicException;
 import com.fullStack.expenseTracker.models.SavedTransaction;
 import com.fullStack.expenseTracker.models.Transaction;
+import com.fullStack.expenseTracker.models.User;
 import com.fullStack.expenseTracker.repository.SavedTransactionRepository;
 import com.fullStack.expenseTracker.repository.TransactionRepository;
 import com.fullStack.expenseTracker.repository.UserRepository;
@@ -43,22 +44,22 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
     public ResponseEntity<ApiResponseDto<?>> createSavedTransaction(SavedTransactionRequestDto requestDto)
             throws UserServiceLogicException, UserNotFoundException {
         try {
-            if (userRepository.existsById(requestDto.getUserId())) {
-                SavedTransaction plannedTransaction = savedTransactionDtoToEntity(requestDto);
-                plannedTransaction = savedTransactionRepository.save(plannedTransaction);
+            User user = userRepository.findById(requestDto.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
 
-                return ResponseEntity.status(HttpStatus.CREATED).body(
-                        new ApiResponseDto<>(
-                                ApiResponseStatus.SUCCESS,
-                                HttpStatus.CREATED,
-                                "Transaction has been successfully created!"
-                        )
-                );
-            }
+            SavedTransaction plannedTransaction = savedTransactionDtoToEntity(requestDto);
+            plannedTransaction = savedTransactionRepository.save(plannedTransaction);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    new ApiResponseDto<>(
+                            ApiResponseStatus.SUCCESS,
+                            HttpStatus.CREATED,
+                            "Transaction has been successfully created!"
+                    )
+            );
         }catch(Exception e) {
             throw new UserServiceLogicException("Failed to create transaction. Try again later");
         }
-        throw new UserNotFoundException("User not found with id: " + requestDto.getUserId());
     }
 
     @Override
@@ -98,12 +99,14 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 SavedTransaction plannedTransaction = savedTransactionRepository.findById(plannedTransactionId)
                         .orElse(null);
 
-                plannedTransaction.setTransactionTypeId(categoryService.getCategoryById(requestDto.getCategoryId()).getTransactionType().getTransactionTypeId());
+                plannedTransaction.setTransactionType(categoryService.getCategoryById(requestDto.getCategoryId()).getTransactionType());
+                plannedTransaction.setCategory(categoryService.getCategoryById(requestDto.getCategoryId()));
+                plannedTransaction.setUser(userRepository.findById(requestDto.getUserId())
+                        .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId())));
                 plannedTransaction.setAmount(requestDto.getAmount());
                 plannedTransaction.setDescription(requestDto.getDescription());
                 plannedTransaction.setFrequency(requestDto.getFrequency());
                 plannedTransaction.setUpcomingDate(requestDto.getUpcomingDate());
-                plannedTransaction.setCategoryId(requestDto.getCategoryId());
 
                 plannedTransaction = savedTransactionRepository.save(plannedTransaction);
 
@@ -172,57 +175,55 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
     @Override
     public ResponseEntity<ApiResponseDto<?>> getAllTransactionsByUser(long userId) throws UserServiceLogicException, UserNotFoundException {
         try {
-            if (userRepository.existsById(userId)) {
-                List<SavedTransaction> transactions = savedTransactionRepository.findByUserIdOrderByUpcomingDateAsc(userId);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
-                List<SavedTransactionResponseDto> response = new ArrayList<>();
+            List<SavedTransaction> transactions = savedTransactionRepository.findByUserOrderByUpcomingDateAsc(user);
 
-                for (SavedTransaction t: transactions) {
-                    response.add(savedTransactionToDto(t));
-                }
-                return ResponseEntity.status(HttpStatus.OK).body(
-                        new ApiResponseDto<>(
-                                ApiResponseStatus.SUCCESS,
-                                HttpStatus.OK,
-                                response
-                        )
-                );
+            List<SavedTransactionResponseDto> response = new ArrayList<>();
 
+            for (SavedTransaction t: transactions) {
+                response.add(savedTransactionToDto(t));
             }
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ApiResponseDto<>(
+                            ApiResponseStatus.SUCCESS,
+                            HttpStatus.OK,
+                            response
+                    )
+            );
         }catch(Exception e) {
             log.error(e.getMessage());
             throw new UserServiceLogicException("Failed to fetch transactions. Try again later");
         }
-        throw new UserNotFoundException("User not found with id: " + userId);
     }
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getAllTransactionsByUserAndMonth(long userId) throws UserServiceLogicException, UserNotFoundException {
         try {
-            if (userRepository.existsById(userId)) {
-                List<SavedTransaction> transactions = savedTransactionRepository.findByUserIdOrderByUpcomingDateAsc(userId).stream()
-                        .filter(t -> t.getUpcomingDate().getMonthValue() == LocalDate.now().getMonthValue())
-                        .toList();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
-                List<SavedTransactionResponseDto> response = new ArrayList<>();
+            List<SavedTransaction> transactions = savedTransactionRepository.findByUserOrderByUpcomingDateAsc(user).stream()
+                    .filter(t -> t.getUpcomingDate().getMonthValue() == LocalDate.now().getMonthValue())
+                    .toList();
 
-                for (SavedTransaction t: transactions) {
-                    response.add(savedTransactionToDto(t));
-                }
+            List<SavedTransactionResponseDto> response = new ArrayList<>();
 
-                return ResponseEntity.status(HttpStatus.OK).body(
-                        new ApiResponseDto<>(
-                                ApiResponseStatus.SUCCESS,
-                                HttpStatus.OK,
-                                response
-                        )
-                );
-
+            for (SavedTransaction t: transactions) {
+                response.add(savedTransactionToDto(t));
             }
+
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ApiResponseDto<>(
+                            ApiResponseStatus.SUCCESS,
+                            HttpStatus.OK,
+                            response
+                    )
+            );
         }catch(Exception e) {
             throw new UserServiceLogicException("Failed to fetch transactions. Try again later");
         }
-        throw new UserNotFoundException("User not found with id: " + userId);
     }
 
     @Override
@@ -248,11 +249,12 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
         throw new TransactionNotFoundException("Transaction not found with id: " + savedTransactionId);
     }
 
-    private SavedTransaction savedTransactionDtoToEntity(SavedTransactionRequestDto requestDto) throws CategoryNotFoundException {
+    private SavedTransaction savedTransactionDtoToEntity(SavedTransactionRequestDto requestDto) throws CategoryNotFoundException, UserNotFoundException {
         return SavedTransaction.builder()
-                .transactionTypeId(categoryService.getCategoryById(requestDto.getCategoryId()).getTransactionType().getTransactionTypeId())
-                .categoryId(requestDto.getCategoryId())
-                .userId(requestDto.getUserId())
+                .transactionType(categoryService.getCategoryById(requestDto.getCategoryId()).getTransactionType())
+                .category(categoryService.getCategoryById(requestDto.getCategoryId()))
+                .user(userRepository.findById(requestDto.getUserId())
+                        .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId())))
                 .amount(requestDto.getAmount())
                 .description(requestDto.getDescription())
                 .upcomingDate(requestDto.getUpcomingDate())
@@ -260,11 +262,10 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 .build();
     }
 
-    private Transaction savedTransactionToTransaction(SavedTransaction savedTransaction)
-            throws CategoryNotFoundException {
+    private Transaction savedTransactionToTransaction(SavedTransaction savedTransaction) {
         return new Transaction(
-                userRepository.findById(savedTransaction.getUserId()).orElse(null),
-                categoryService.getCategoryById(savedTransaction.getCategoryId()),
+                savedTransaction.getUser(),
+                savedTransaction.getCategory(),
                 savedTransaction.getDescription(),
                 savedTransaction.getAmount(),
                 savedTransaction.getUpcomingDate()
@@ -281,12 +282,11 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
         return null;
     }
 
-    private SavedTransactionResponseDto savedTransactionToDto(SavedTransaction savedTransaction)
-            throws CategoryNotFoundException {
+    private SavedTransactionResponseDto savedTransactionToDto(SavedTransaction savedTransaction) {
         return new SavedTransactionResponseDto(
                 savedTransaction.getPlanId(),
-                savedTransaction.getTransactionTypeId(),
-                categoryService.getCategoryById(savedTransaction.getCategoryId()).getCategoryName(),
+                savedTransaction.getTransactionType().getTransactionTypeId(),
+                savedTransaction.getCategory().getCategoryName(),
                 savedTransaction.getAmount(),
                 savedTransaction.getDescription(),
                 savedTransaction.getFrequency(),

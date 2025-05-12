@@ -62,6 +62,8 @@ public class WebSecurityConfig {
                                 .requestMatchers("/mywallet/category/**").permitAll()
                                 .requestMatchers("/mywallet/transaction/**").permitAll()
                                 .requestMatchers("/mywallet/user/**").permitAll()
+                                .requestMatchers("/mywallet/savings/**").permitAll()
+                                .requestMatchers("/mywallet/rewards/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

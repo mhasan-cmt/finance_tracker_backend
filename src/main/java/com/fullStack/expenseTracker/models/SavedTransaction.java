@@ -1,5 +1,6 @@
 package com.fullStack.expenseTracker.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fullStack.expenseTracker.enums.ETransactionFrequency;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,15 +22,18 @@ public class SavedTransaction {
     @Column(name = "plan_id")
     private long planId;
 
-    @Column(name = "user_id")
-    private long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "transaction_type_id")
+    private TransactionType transactionType;
 
-    @Column(name = "transaction_type_id")
-    private int transactionTypeId;
-
-    @Column(name = "category_id")
-    private int categoryId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     private double amount;
 

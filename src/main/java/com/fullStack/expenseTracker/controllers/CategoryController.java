@@ -8,6 +8,7 @@ import com.fullStack.expenseTracker.exceptions.CategoryAlreadyExistsException;
 import com.fullStack.expenseTracker.exceptions.CategoryNotFoundException;
 import com.fullStack.expenseTracker.exceptions.CategoryServiceLogicException;
 import com.fullStack.expenseTracker.exceptions.TransactionTypeNotFoundException;
+import com.fullStack.expenseTracker.exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +32,32 @@ public class CategoryController {
         return categoryService.getCategories();
     }
 
+    @GetMapping("/getByUser")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<ApiResponseDto<?>> getCategoriesByUser(@Param("email") String email) 
+            throws UserNotFoundException {
+        return categoryService.getCategoriesByUser(email);
+    }
+
     @PostMapping("/new")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponseDto<?>> addNewCategory(@RequestBody @Valid CategoryRequestDto categoryRequestDto)
-            throws CategoryServiceLogicException, TransactionTypeNotFoundException, CategoryAlreadyExistsException {
+            throws CategoryServiceLogicException, TransactionTypeNotFoundException, CategoryAlreadyExistsException, UserNotFoundException {
         return categoryService.addNewCategory(categoryRequestDto);
+    }
+
+    @PostMapping("/user/new")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<ApiResponseDto<?>> addUserCategory(@RequestBody @Valid CategoryRequestDto categoryRequestDto)
+            throws CategoryServiceLogicException, TransactionTypeNotFoundException, CategoryAlreadyExistsException, UserNotFoundException {
+        return categoryService.addUserCategory(categoryRequestDto);
     }
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponseDto<?>> updateCategory(@Param("categoryId") int categoryId,
                                                             @RequestBody @Valid CategoryRequestDto categoryRequestDto)
-            throws CategoryServiceLogicException, CategoryNotFoundException, TransactionTypeNotFoundException {
+            throws CategoryServiceLogicException, CategoryNotFoundException, TransactionTypeNotFoundException, UserNotFoundException {
         return categoryService.updateCategory(categoryId, categoryRequestDto);
     }
 
@@ -54,5 +69,3 @@ public class CategoryController {
     }
 
 }
-
-
