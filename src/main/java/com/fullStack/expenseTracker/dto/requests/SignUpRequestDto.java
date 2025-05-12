@@ -22,6 +22,18 @@ public record SignUpRequestDto(
         @Size(max = 20, message = "Password can have have atmost 20 characters!")
         String password,
 
+        String phone,
+
+        String gender,
+
+        String firstName,
+
+        String lastName,
+
+        String dateOfBirth,
+
+        String address,
+
         Set<String> roles
 ) {
 

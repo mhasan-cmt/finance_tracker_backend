@@ -48,6 +48,20 @@ public class User {
 
     private String profileImgUrl;
 
+    @Size(max = 15)
+    private String phone;
+
+    private String gender;
+
+    private String firstName;
+
+    private String lastName;
+
+    @Temporal(TemporalType.DATE)
+    private Date dateOfBirth;
+
+    private String address;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(  name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

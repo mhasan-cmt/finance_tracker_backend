@@ -219,15 +219,21 @@ public class AuthServiceImpl implements AuthService {
 
 
     private User createUser(SignUpRequestDto signUpRequestDto) throws RoleNotFoundException {
-        return new User(
-                signUpRequestDto.userName(),
-                signUpRequestDto.email(),
-                passwordEncoder.encode(signUpRequestDto.password()),
-                generateVerificationCode(),
-                calculateCodeExpirationTime(),
-                false,
-                determineRoles(signUpRequestDto.roles())
-        );
+        return User.builder()
+                .username(signUpRequestDto.userName())
+                .email(signUpRequestDto.email())
+                .password(passwordEncoder.encode(signUpRequestDto.password()))
+                .verificationCode(generateVerificationCode())
+                .verificationCodeExpiryTime(calculateCodeExpirationTime())
+                .enabled(false)
+                .roles(determineRoles(signUpRequestDto.roles()))
+                .phone(signUpRequestDto.phone())
+                .gender(signUpRequestDto.gender())
+                .firstName(signUpRequestDto.firstName())
+                .lastName(signUpRequestDto.lastName())
+                .dateOfBirth(signUpRequestDto.dateOfBirth() != null ? java.sql.Date.valueOf(signUpRequestDto.dateOfBirth()) : null)
+                .address(signUpRequestDto.address())
+                .build();
     }
 
     private String generateVerificationCode() {

@@ -21,5 +21,19 @@ public class UserResponseDto {
 
     private Integer noOfTransactions;
 
+    private String phone;
+
+    private String gender;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String dateOfBirth;
+
+    private String address;
+
+    private String profileImgUrl;
+
 
 }
