@@ -3,7 +3,6 @@ package com.fullStack.expenseTracker.services.impls;
 
 import com.fullStack.expenseTracker.dto.reponses.PageResponseDto;
 import com.fullStack.expenseTracker.dto.requests.UpdateUserRequestDto;
-import com.fullStack.expenseTracker.models.Transaction;
 import com.fullStack.expenseTracker.services.NotificationService;
 import com.fullStack.expenseTracker.services.UserService;
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
@@ -18,7 +17,6 @@ import com.fullStack.expenseTracker.repository.TransactionTypeRepository;
 import com.fullStack.expenseTracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -214,6 +212,17 @@ public class UserServiceImpl implements UserService {
     public User findByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email " + email));
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> findByUsername(String username) throws UserNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ApiResponseDto<>(
+                        ApiResponseStatus.SUCCESS,
+                        HttpStatus.OK,
+                        userRepository.findByUsername(username).orElse(null)
+                )
+        );
     }
 
     @Override

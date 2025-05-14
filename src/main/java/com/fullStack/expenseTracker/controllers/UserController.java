@@ -85,4 +85,13 @@ public class UserController {
             throws UserNotFoundException, UserServiceLogicException {
         return userService.updateUser(updateUserRequestDto);
     }
+
+    @GetMapping("/get")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponseDto<?>> getByUsername(@RequestParam String username)
+            throws UserNotFoundException, UserServiceLogicException {
+        return userService.findByUsername(username);
+    }
+
+
 }

@@ -30,4 +30,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHERE ur.role_id = :roleId AND (u.username LIKE %:keyword% OR u.email LIKE %:keyword%)", nativeQuery = true)
     Page<User> findAll(Pageable pageable, @Param("roleId") int roleId, @Param("keyword") String keyword);
 
+    Optional<User> findByUsername(String username);
 }

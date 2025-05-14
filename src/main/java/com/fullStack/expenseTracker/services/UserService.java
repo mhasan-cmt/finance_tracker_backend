@@ -18,6 +18,7 @@ public interface UserService {
     boolean existsByEmail(String Email);
 
     User findByEmail(String email) throws UserNotFoundException;
+    ResponseEntity<ApiResponseDto<?>> findByUsername(String username) throws UserNotFoundException;
 
     ResponseEntity<ApiResponseDto<?>> getAllUsers(int pageNumber, int pageSize, String searchKey) throws RoleNotFoundException, UserServiceLogicException;
 
