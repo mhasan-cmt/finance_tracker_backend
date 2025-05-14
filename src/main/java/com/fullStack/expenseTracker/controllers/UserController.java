@@ -4,6 +4,7 @@ import com.fullStack.expenseTracker.services.AuthService;
 import com.fullStack.expenseTracker.services.UserService;
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
 import com.fullStack.expenseTracker.dto.requests.ResetPasswordRequestDto;
+import com.fullStack.expenseTracker.dto.requests.UpdateUserRequestDto;
 import com.fullStack.expenseTracker.exceptions.RoleNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserServiceLogicException;
@@ -76,5 +77,12 @@ public class UserController {
     public ResponseEntity<ApiResponseDto<?>> deleteProfileImg(@RequestParam("email") String email)
             throws UserNotFoundException, UserServiceLogicException, IOException {
         return userService.deleteProfileImg(email);
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponseDto<?>> updateUser(@RequestBody @Valid UpdateUserRequestDto updateUserRequestDto)
+            throws UserNotFoundException, UserServiceLogicException {
+        return userService.updateUser(updateUserRequestDto);
     }
 }

@@ -4,10 +4,16 @@ package com.fullStack.expenseTracker.models;
 import com.fullStack.expenseTracker.enums.ERole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

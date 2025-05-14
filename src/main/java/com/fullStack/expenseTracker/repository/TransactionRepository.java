@@ -17,6 +17,8 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
+    Boolean existsByUser_Id(Long userId);
+
     @Query(value = "SELECT t.*, c.category_id AS c_category_id, c.category_name AS c_category_name, " +
             "u.id AS u_id, u.email AS u_email, " +
             "tt.transaction_type_id AS tt_transaction_type_id, tt.transaction_type_name AS tt_transaction_type_name " +

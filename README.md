@@ -36,7 +36,24 @@ You can find the detailed project proposal [here](https://drive.google.com/file/
    cd finance-tracker/backend
    ```
 3. Set up PostgreSQL and configure the database in `application.yml`.
-4. Run the backend:
+4. Configure email settings:
+   - Create a `.env` file in the backend directory based on the `example.env` template
+   - Set the following environment variables:
+     ```
+     DB_URL=jdbc:postgresql://localhost:5432/your_database_name
+     DB_USER=your_database_username
+     DB_PASSWORD=your_database_password
+     GMAIL_USER=your_gmail_address@gmail.com
+     GMAIL_APP_PASSWORD=your_gmail_app_password
+     ```
+   - **Important for Gmail users**: You need to use an App Password, not your regular Gmail password
+     - Go to your [Google Account Security settings](https://myaccount.google.com/security)
+     - Enable 2-Step Verification if not already enabled
+     - Go to [App passwords](https://myaccount.google.com/apppasswords)
+     - Select "Mail" as the app and "Other" as the device (name it "Finance Tracker")
+     - Copy the generated 16-character password and use it as your `GMAIL_APP_PASSWORD`
+
+5. Run the backend:
    ```bash
    ./mvnw spring-boot:run
    ```
@@ -58,4 +75,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 For any queries, feel free to reach out to the team via email or GitHub issues.
-

@@ -1,6 +1,7 @@
 package com.fullStack.expenseTracker.services;
 
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
+import com.fullStack.expenseTracker.dto.requests.UpdateUserRequestDto;
 import com.fullStack.expenseTracker.exceptions.*;
 import com.fullStack.expenseTracker.models.User;
 import org.springframework.http.ResponseEntity;
@@ -27,4 +28,6 @@ public interface UserService {
     ResponseEntity<ApiResponseDto<?>> getProfileImg(String email) throws UserNotFoundException, IOException, UserServiceLogicException;
 
     ResponseEntity<ApiResponseDto<?>> deleteProfileImg(String email) throws UserServiceLogicException, UserNotFoundException;
+
+    ResponseEntity<ApiResponseDto<?>> updateUser(UpdateUserRequestDto updateUserRequestDto) throws UserNotFoundException, UserServiceLogicException;
 }

@@ -59,9 +59,18 @@ public class AuthServiceImpl implements AuthService {
                     ApiResponseStatus.SUCCESS, HttpStatus.CREATED, "Verification email has been successfully sent!"
             ));
 
+        } catch (jakarta.mail.MessagingException e) {
+            log.error("Email sending failed: {}", e.getMessage());
+            // Check if it's an authentication error
+            if (e.getMessage().contains("authentication failed") || e.getMessage().contains("App Password")) {
+                throw new UserServiceLogicException("Registration failed: Email authentication failed. " +
+                        "Please check your email configuration. If using Gmail, make sure you're using an App Password, not your regular password.");
+            } else {
+                throw new UserServiceLogicException("Registration failed: Unable to send verification email. " + e.getMessage());
+            }
         } catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());
-            throw new UserServiceLogicException("Registration failed: Something went wrong!");
+            throw new UserServiceLogicException("Registration failed: Something went wrong! " + e.getMessage());
         }
 
     }
@@ -102,9 +111,18 @@ public class AuthServiceImpl implements AuthService {
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto<>(
                     ApiResponseStatus.SUCCESS, HttpStatus.OK, "Verification email has been resent successfully!")
             );
+        } catch (jakarta.mail.MessagingException e) {
+            log.error("Email sending failed: {}", e.getMessage());
+            // Check if it's an authentication error
+            if (e.getMessage().contains("authentication failed") || e.getMessage().contains("App Password")) {
+                throw new UserServiceLogicException("Verification failed: Email authentication failed. " +
+                        "Please check your email configuration. If using Gmail, make sure you're using an App Password, not your regular password.");
+            } else {
+                throw new UserServiceLogicException("Verification failed: Unable to send verification email. " + e.getMessage());
+            }
         } catch (Exception e) {
             log.error("Registration verification failed: {}", e.getMessage());
-            throw new UserServiceLogicException("Registration failed: Something went wrong!");
+            throw new UserServiceLogicException("Verification failed: Something went wrong! " + e.getMessage());
         }
 
     }
@@ -124,9 +142,18 @@ public class AuthServiceImpl implements AuthService {
                         HttpStatus.ACCEPTED,
                         "Verification successful: Email sent successfully!"
                 ));
+            } catch (jakarta.mail.MessagingException e) {
+                log.error("Email sending failed: {}", e.getMessage());
+                // Check if it's an authentication error
+                if (e.getMessage().contains("authentication failed") || e.getMessage().contains("App Password")) {
+                    throw new UserServiceLogicException("Verification failed: Email authentication failed. " +
+                            "Please check your email configuration. If using Gmail, make sure you're using an App Password, not your regular password.");
+                } else {
+                    throw new UserServiceLogicException("Verification failed: Unable to send verification email. " + e.getMessage());
+                }
             } catch (Exception e) {
                 log.error("Reset password email verification failed: {}", e.getMessage());
-                throw new UserServiceLogicException("Verification failed: Something went wrong!");
+                throw new UserServiceLogicException("Verification failed: Something went wrong! " + e.getMessage());
             }
         }
 

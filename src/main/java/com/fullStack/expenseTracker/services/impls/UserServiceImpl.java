@@ -2,6 +2,8 @@ package com.fullStack.expenseTracker.services.impls;
 
 
 import com.fullStack.expenseTracker.dto.reponses.PageResponseDto;
+import com.fullStack.expenseTracker.dto.requests.UpdateUserRequestDto;
+import com.fullStack.expenseTracker.models.Transaction;
 import com.fullStack.expenseTracker.services.NotificationService;
 import com.fullStack.expenseTracker.services.UserService;
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -51,6 +54,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public ResponseEntity<ApiResponseDto<?>> getAllUsers(int pageNumber, int pageSize, String searchKey)
             throws RoleNotFoundException, UserServiceLogicException {
 
@@ -79,6 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ApiResponseDto<?>> enableOrDisableUser(long userId)
             throws UserNotFoundException, UserServiceLogicException {
         User user = userRepository.findById(userId).orElseThrow(
@@ -86,9 +91,8 @@ public class UserServiceImpl implements UserService {
         );
 
         try {
-
             user.setEnabled(!user.isEnabled());
-            userRepository.save(user);
+            User savedUser = userRepository.save(user);
 
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ApiResponseDto<>(
@@ -96,12 +100,13 @@ public class UserServiceImpl implements UserService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to enable/disable user: " + e.getMessage());
-            throw new UserServiceLogicException("Failed to update user: Try again later!");
+            log.error("Failed to enable/disable user: Could not commit JPA transaction. Error: {}", e.getMessage());
+            throw new UserServiceLogicException("Failed to update user: Could not commit database transaction. Please try again later.");
         }
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ApiResponseDto<?>> uploadProfileImg(String email, MultipartFile file)
             throws UserServiceLogicException, UserNotFoundException {
         if (existsByEmail(email)) {
@@ -112,15 +117,15 @@ public class UserServiceImpl implements UserService {
                 Path targetLocation = Paths.get(userProfileUploadDir).resolve(newFileName);
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
                 user.setProfileImgUrl(String.valueOf(targetLocation));
-                userRepository.save(user);
+                User savedUser = userRepository.save(user);
                 return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
                         ApiResponseStatus.SUCCESS,
                         HttpStatus.CREATED,
                         "Profile image successfully updated!"
                 ));
             } catch (Exception e) {
-                log.error("Failed to update profile img: {}", e.getMessage());
-                throw new UserServiceLogicException("Failed to update profile image: Try again later!");
+                log.error("Failed to update profile img: Could not commit JPA transaction. Error: {}", e.getMessage());
+                throw new UserServiceLogicException("Failed to update profile image: Could not commit database transaction. Please try again later.");
             }
         }
 
@@ -128,6 +133,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiResponseDto<?>> getProfileImg(String email) throws UserNotFoundException, IOException, UserServiceLogicException {
         if (existsByEmail(email)) {
             try {
@@ -162,6 +168,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ApiResponseDto<?>> deleteProfileImg(String email) throws UserServiceLogicException, UserNotFoundException {
         if (existsByEmail(email)) {
             try {
@@ -182,8 +189,8 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             } catch (Exception e) {
-                log.error("Failed to get profile img: {}", e.getMessage());
-                throw new UserServiceLogicException("Failed to remove profile image: Try again later!");
+                log.error("Failed to delete profile img: Could not commit JPA transaction. Error: {}", e.getMessage());
+                throw new UserServiceLogicException("Failed to remove profile image: Could not commit database transaction. Please try again later.");
             }
         }
 
@@ -191,42 +198,111 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User findByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email " + email));
     }
 
-    private UserResponseDto userToUserResponseDto(User user) {
+    @Override
+    @Transactional
+    public ResponseEntity<ApiResponseDto<?>> updateUser(UpdateUserRequestDto updateUserRequestDto)
+            throws UserNotFoundException, UserServiceLogicException {
+        if (existsByEmail(updateUserRequestDto.email())) {
+            try {
+                User user = findByEmail(updateUserRequestDto.email());
+
+                // Update user fields if provided in the request
+                if (updateUserRequestDto.phone() != null) {
+                    user.setPhone(updateUserRequestDto.phone());
+                }
+                if (updateUserRequestDto.gender() != null) {
+                    user.setGender(updateUserRequestDto.gender());
+                }
+                if (updateUserRequestDto.firstName() != null) {
+                    user.setFirstName(updateUserRequestDto.firstName());
+                }
+                if (updateUserRequestDto.lastName() != null) {
+                    user.setLastName(updateUserRequestDto.lastName());
+                }
+                if (updateUserRequestDto.dateOfBirth() != null) {
+                    user.setDateOfBirth(java.sql.Date.valueOf(updateUserRequestDto.dateOfBirth()));
+                }
+                if (updateUserRequestDto.address() != null) {
+                    user.setAddress(updateUserRequestDto.address());
+                }
+
+                User savedUser = userRepository.save(user);
+
+                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto<>(
+                        ApiResponseStatus.SUCCESS,
+                        HttpStatus.OK,
+                        userToUserResponseDto(savedUser)
+                ));
+            } catch (Exception e) {
+                log.error("Failed to update user profile: Could not commit JPA transaction for update user. Error: {}", e.getMessage());
+                throw new UserServiceLogicException("Failed to update user profile: Could not commit database transaction. Please try again later.");
+            }
+        }
+
+        throw new UserNotFoundException("User not found with email " + updateUserRequestDto.email());
+    }
+
+    @Transactional
+    protected UserResponseDto userToUserResponseDto(User user) {
+        Boolean exists = transactionRepository.existsByUser_Id(user.getId());
+        Double totalExpenses = 0.0;
+        Double totalIncome = 0.0;
+        Integer totalTransactions = 0;
+
+        if (exists) {
+            int currentMonth = LocalDate.now().getMonthValue();
+            int currentYear = LocalDate.now().getYear();
+
+            totalExpenses = transactionRepository.findTotalByUserAndTransactionType(
+                    user.getId(),
+                    transactionTypeRepository.findByTransactionTypeName(ETransactionType.TYPE_EXPENSE).getTransactionTypeId(),
+                    currentMonth,
+                    currentYear
+            );
+            totalIncome = transactionRepository.findTotalByUserAndTransactionType(
+                    user.getId(),
+                    transactionTypeRepository.findByTransactionTypeName(ETransactionType.TYPE_INCOME).getTransactionTypeId(),
+                    currentMonth,
+                    currentYear
+            );
+            totalTransactions = transactionRepository.findTotalNoOfTransactionsByUser(user.getId(), currentMonth, currentYear);
+        }
+
         return new UserResponseDto(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.isEnabled(),
-                transactionRepository.findTotalByUserAndTransactionType(
-                        user.getId(),
-                        transactionTypeRepository.findByTransactionTypeName(ETransactionType.TYPE_EXPENSE).getTransactionTypeId(),
-                        LocalDate.now().getMonthValue(),
-                        LocalDate.now().getYear()
-                ),
-                transactionRepository.findTotalByUserAndTransactionType(
-                        user.getId(),
-                        transactionTypeRepository.findByTransactionTypeName(ETransactionType.TYPE_INCOME).getTransactionTypeId(),
-                        LocalDate.now().getMonthValue(),
-                        LocalDate.now().getYear()
-                ),
-                transactionRepository.findTotalNoOfTransactionsByUser(user.getId(), LocalDate.now().getMonthValue(),
-                        LocalDate.now().getYear())
+                totalExpenses != null ? totalExpenses : 0D,
+                totalIncome != null ? totalIncome : 0D,
+                totalTransactions != null ? totalTransactions : (int) 0L,
+                user.getPhone(),
+                user.getGender(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null,
+                user.getAddress(),
+                user.getProfileImgUrl()
         );
     }
+
 
 }

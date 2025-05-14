@@ -1,0 +1,1751 @@
+{
+  "info": {
+    "name": "Expense Tracker API",
+    "description": "API collection for the Expense Tracker application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Sign In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/signin",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "signin"]
+            },
+            "description": "Authenticate a user and get a JWT token"
+          },
+          "response": []
+        },
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userName\": \"newuser\",\n    \"email\": \"newuser@example.com\",\n    \"password\": \"password123\",\n    \"phone\": \"1234567890\",\n    \"gender\": \"Male\",\n    \"firstName\": \"New\",\n    \"lastName\": \"User\",\n    \"dateOfBirth\": \"1990-01-01\",\n    \"address\": \"123 Main St\",\n    \"roles\": [\"ROLE_USER\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "signup"]
+            },
+            "description": "Register a new user"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Registration",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/signup/verify?code=verification_code",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "signup", "verify"],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "verification_code"
+                }
+              ]
+            },
+            "description": "Verify user registration with verification code"
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Verification Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/signup/resend?email=user@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "signup", "resend"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                }
+              ]
+            },
+            "description": "Resend verification code to user's email"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints for signing in, signing up, and verifying accounts"
+    },
+    {
+      "name": "Forgot Password",
+      "item": [
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/forgotPassword/verifyEmail?email=user@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "forgotPassword", "verifyEmail"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                }
+              ]
+            },
+            "description": "Verify email and send password reset verification"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/forgotPassword/verifyCode?code=reset_code",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "forgotPassword", "verifyCode"],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "reset_code"
+                }
+              ]
+            },
+            "description": "Verify password reset code"
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/forgotPassword/resetPassword",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "forgotPassword", "resetPassword"]
+            },
+            "description": "Reset password with verification code"
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/auth/forgotPassword/resendEmail?email=user@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "auth", "forgotPassword", "resendEmail"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                }
+              ]
+            },
+            "description": "Resend password reset verification email"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for password reset flow"
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/getAll?pageNumber=0&pageSize=10&searchKey=",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "getAll"],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "0"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "searchKey",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Get all users (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Disable User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/disable?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "disable"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Disable a user (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Enable User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/enable?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "enable"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Enable a user (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"currentPassword\": \"password123\",\n    \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/settings/changePassword",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "settings", "changePassword"]
+            },
+            "description": "Change user password"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Profile Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "user@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/path/to/image.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/settings/profileImg",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "settings", "profileImg"]
+            },
+            "description": "Upload user profile image"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile Image",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/settings/profileImg?email=user@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "settings", "profileImg"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                }
+              ]
+            },
+            "description": "Get user profile image"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Profile Image",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/settings/profileImg?email=user@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "settings", "profileImg"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                }
+              ]
+            },
+            "description": "Delete user profile image"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user@example.com\",\n    \"phone\": \"1234567890\",\n    \"firstName\": \"Updated\",\n    \"lastName\": \"User\",\n    \"address\": \"456 New St\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/user/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "user", "update"]
+            },
+            "description": "Update user information"
+          },
+          "response": []
+        }
+      ],
+      "description": "User management endpoints"
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/transaction/getAll?pageNumber=0&pageSize=10&searchKey=",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "transaction", "getAll"],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "0"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "searchKey",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Get all transactions (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userEmail\": \"user@example.com\",\n    \"categoryId\": 1,\n    \"description\": \"Grocery shopping\",\n    \"amount\": 50.25,\n    \"date\": \"2023-06-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/transaction/new",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "transaction", "new"]
+            },
+            "description": "Add a new transaction"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transactions By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/transaction/getByUser?email=user@example.com&pageNumber=0&pageSize=10&searchKey=&sortField=date&sortDirec=desc&transactionType=",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "transaction", "getByUser"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                },
+                {
+                  "key": "pageNumber",
+                  "value": "0"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "searchKey",
+                  "value": ""
+                },
+                {
+                  "key": "sortField",
+                  "value": "date"
+                },
+                {
+                  "key": "sortDirec",
+                  "value": "desc"
+                },
+                {
+                  "key": "transactionType",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Get transactions for a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/transaction/getById?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "transaction", "getById"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get a transaction by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userEmail\": \"user@example.com\",\n    \"categoryId\": 1,\n    \"description\": \"Updated grocery shopping\",\n    \"amount\": 55.75,\n    \"date\": \"2023-06-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/transaction/update?transactionId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "transaction", "update"],
+              "query": [
+                {
+                  "key": "transactionId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Update a transaction"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/transaction/delete?transactionId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "transaction", "delete"],
+              "query": [
+                {
+                  "key": "transactionId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Delete a transaction"
+          },
+          "response": []
+        }
+      ],
+      "description": "Transaction management endpoints"
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/category/getAll",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "category", "getAll"]
+            },
+            "description": "Get all categories"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Categories By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/category/getByUser?email=user@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "category", "getByUser"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                }
+              ]
+            },
+            "description": "Get categories for a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Add New Category (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"categoryName\": \"Groceries\",\n    \"transactionTypeId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/category/new",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "category", "new"]
+            },
+            "description": "Add a new category (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Add User Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"categoryName\": \"My Groceries\",\n    \"transactionTypeId\": 1,\n    \"userId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/category/user/new",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "category", "user", "new"]
+            },
+            "description": "Add a user-specific category"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"categoryName\": \"Updated Groceries\",\n    \"transactionTypeId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/category/update?categoryId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "category", "update"],
+              "query": [
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Update a category (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Enable/Disable Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/category/delete?categoryId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "category", "delete"],
+              "query": [
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Enable or disable a category (admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Category management endpoints"
+    },
+    {
+      "name": "Budget",
+      "item": [
+        {
+          "name": "Create Budget",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"amount\": 1000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/budget/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "budget", "create"]
+            },
+            "description": "Create a budget"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Budget By Month",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/budget/get?userId=1&month=6&year=2023",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "budget", "get"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "month",
+                  "value": "6"
+                },
+                {
+                  "key": "year",
+                  "value": "2023"
+                }
+              ]
+            },
+            "description": "Get budget by month"
+          },
+          "response": []
+        }
+      ],
+      "description": "Budget management endpoints"
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Get Total Income/Expense",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/report/getTotalIncomeOrExpense?userId=1&transactionTypeId=1&month=6&year=2023",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "report", "getTotalIncomeOrExpense"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "transactionTypeId",
+                  "value": "1"
+                },
+                {
+                  "key": "month",
+                  "value": "6"
+                },
+                {
+                  "key": "year",
+                  "value": "2023"
+                }
+              ]
+            },
+            "description": "Get total income or expense"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Total Number of Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/report/getTotalNoOfTransactions?userId=1&month=6&year=2023",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "report", "getTotalNoOfTransactions"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "month",
+                  "value": "6"
+                },
+                {
+                  "key": "year",
+                  "value": "2023"
+                }
+              ]
+            },
+            "description": "Get total number of transactions"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Total By Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/report/getTotalByCategory?email=user@example.com&categoryId=1&month=6&year=2023",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "report", "getTotalByCategory"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                },
+                {
+                  "key": "month",
+                  "value": "6"
+                },
+                {
+                  "key": "year",
+                  "value": "2023"
+                }
+              ]
+            },
+            "description": "Get total by category"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Monthly Summary By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/report/getMonthlySummaryByUser?email=user@example.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "report", "getMonthlySummaryByUser"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "user@example.com"
+                }
+              ]
+            },
+            "description": "Get monthly summary by user"
+          },
+          "response": []
+        }
+      ],
+      "description": "Report endpoints"
+    },
+    {
+      "name": "Savings Goals",
+      "item": [
+        {
+          "name": "Create Savings Goal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"name\": \"Vacation Fund\",\n    \"description\": \"Saving for summer vacation\",\n    \"targetAmount\": 2000.00,\n    \"startDate\": \"2023-01-01\",\n    \"targetDate\": \"2023-12-31\",\n    \"categoryId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/goal/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "goal", "create"]
+            },
+            "description": "Create a new savings goal"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Savings Goal",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"name\": \"Updated Vacation Fund\",\n    \"description\": \"Saving for winter vacation\",\n    \"targetAmount\": 2500.00,\n    \"startDate\": \"2023-01-01\",\n    \"targetDate\": \"2023-12-31\",\n    \"categoryId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/goal/update?goalId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "goal", "update"],
+              "query": [
+                {
+                  "key": "goalId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Update a savings goal"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Savings Goal By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/goal?goalId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "goal"],
+              "query": [
+                {
+                  "key": "goalId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get a savings goal by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Savings Goals By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/goal/user/all?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "goal", "user", "all"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get all savings goals for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Savings Goals By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/goal/user/active?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "goal", "user", "active"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get active savings goals for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Completed Savings Goals By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/goal/user/completed?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "goal", "user", "completed"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get completed savings goals for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Savings Goal",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/goal/delete?goalId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "goal", "delete"],
+              "query": [
+                {
+                  "key": "goalId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Delete a savings goal"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Contribution",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"goalId\": 1,\n    \"amount\": 100.00,\n    \"transactionId\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/contribution/add",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "contribution", "add"]
+            },
+            "description": "Add a contribution to a savings goal"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Contributions By Goal ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/savings/contribution/goal?goalId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "savings", "contribution", "goal"],
+              "query": [
+                {
+                  "key": "goalId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get contributions for a savings goal"
+          },
+          "response": []
+        }
+      ],
+      "description": "Savings goal management endpoints"
+    },
+    {
+      "name": "Rewards",
+      "item": [
+        {
+          "name": "Create Reward",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"name\": \"Movie Night\",\n    \"description\": \"Reward yourself with a movie night\",\n    \"pointsRequired\": 100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "create"]
+            },
+            "description": "Create a new reward"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Reward",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"name\": \"Updated Movie Night\",\n    \"description\": \"Reward yourself with a premium movie night\",\n    \"pointsRequired\": 150\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/update?rewardId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "update"],
+              "query": [
+                {
+                  "key": "rewardId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Update a reward"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Reward By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/?rewardId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", ""],
+              "query": [
+                {
+                  "key": "rewardId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get a reward by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Rewards By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/user/all?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "user", "all"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get all rewards for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Available Rewards By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/user/available?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "user", "available"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get available rewards for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Redeemed Rewards By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/user/redeemed?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "user", "redeemed"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get redeemed rewards for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Reward",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/delete?rewardId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "delete"],
+              "query": [
+                {
+                  "key": "rewardId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Delete a reward"
+          },
+          "response": []
+        },
+        {
+          "name": "Redeem Reward",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/redeem?rewardId=1&userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "redeem"],
+              "query": [
+                {
+                  "key": "rewardId",
+                  "value": "1"
+                },
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Redeem a reward"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Points",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/points?userId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "points"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get user points"
+          },
+          "response": []
+        },
+        {
+          "name": "Add User Points",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/rewards/points/add?userId=1&points=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "rewards", "points", "add"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "1"
+                },
+                {
+                  "key": "points",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Add points to a user (admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Reward management endpoints"
+    },
+    {
+      "name": "Transaction Types",
+      "item": [
+        {
+          "name": "Get All Transaction Types",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/transactiontype/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "transactiontype", "all"]
+            },
+            "description": "Get all transaction types"
+          },
+          "response": []
+        }
+      ],
+      "description": "Transaction type endpoints"
+    },
+    {
+      "name": "Saved Transactions",
+      "item": [
+        {
+          "name": "Create Saved Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"categoryId\": 1,\n    \"amount\": 50.00,\n    \"description\": \"Monthly subscription\",\n    \"frequency\": \"MONTHLY\",\n    \"upcomingDate\": \"2023-07-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", "create"]
+            },
+            "description": "Create a saved transaction"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Saved Transaction",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/add?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", "add"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Add a saved transaction"
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Saved Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": 1,\n    \"categoryId\": 1,\n    \"amount\": 55.00,\n    \"description\": \"Updated monthly subscription\",\n    \"frequency\": \"MONTHLY\",\n    \"upcomingDate\": \"2023-07-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", ""],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Edit a saved transaction"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Saved Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", ""],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Delete a saved transaction"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Transactions By User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/user?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", "user"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get all saved transactions for a user"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Transactions By User And Month",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/month?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", "month"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get all saved transactions for a user by month"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Saved Transaction By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", ""],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get a saved transaction by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Skip Saved Transaction",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mywallet/saved/skip?id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["mywallet", "saved", "skip"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Skip a saved transaction"
+          },
+          "response": []
+        }
+      ],
+      "description": "Saved transaction management endpoints"
+    }
+  ]
+}
