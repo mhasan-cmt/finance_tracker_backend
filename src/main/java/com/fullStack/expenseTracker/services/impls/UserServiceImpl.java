@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to fetch All users: " + e.getMessage());
+            log.error("Failed to fetch All users: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to fetch All users: Try again later!");
         }
     }

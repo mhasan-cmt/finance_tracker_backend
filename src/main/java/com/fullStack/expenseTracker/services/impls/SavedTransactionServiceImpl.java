@@ -19,7 +19,6 @@ import com.fullStack.expenseTracker.services.CategoryService;
 import com.fullStack.expenseTracker.services.SavedTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -48,7 +47,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                     .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
 
             SavedTransaction plannedTransaction = savedTransactionDtoToEntity(requestDto);
-            plannedTransaction = savedTransactionRepository.save(plannedTransaction);
+            savedTransactionRepository.save(plannedTransaction);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new ApiResponseDto<>(
@@ -70,6 +69,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 SavedTransaction plannedTransaction = savedTransactionRepository.findById(savedTransactionId)
                         .orElse(null);
 
+                assert plannedTransaction != null;
                 transactionRepository.save(savedTransactionToTransaction(plannedTransaction));
 
                 LocalDate upcomingDate = getUpcomingDate(plannedTransaction.getFrequency(), plannedTransaction.getUpcomingDate());
@@ -99,6 +99,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 SavedTransaction plannedTransaction = savedTransactionRepository.findById(plannedTransactionId)
                         .orElse(null);
 
+                assert plannedTransaction != null;
                 plannedTransaction.setTransactionType(categoryService.getCategoryById(requestDto.getCategoryId()).getTransactionType());
                 plannedTransaction.setCategory(categoryService.getCategoryById(requestDto.getCategoryId()));
                 plannedTransaction.setUser(userRepository.findById(requestDto.getUserId())
@@ -108,7 +109,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 plannedTransaction.setFrequency(requestDto.getFrequency());
                 plannedTransaction.setUpcomingDate(requestDto.getUpcomingDate());
 
-                plannedTransaction = savedTransactionRepository.save(plannedTransaction);
+                savedTransactionRepository.save(plannedTransaction);
 
                 return ResponseEntity.status(HttpStatus.OK).body(
                         new ApiResponseDto<>(
@@ -153,6 +154,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 SavedTransaction plannedTransaction = savedTransactionRepository.findById(savedTransactionId)
                         .orElse(null);
 
+                assert plannedTransaction != null;
                 LocalDate upcomingDate = getUpcomingDate(plannedTransaction.getFrequency(), plannedTransaction.getUpcomingDate());
 
                 plannedTransaction.setUpcomingDate(upcomingDate);

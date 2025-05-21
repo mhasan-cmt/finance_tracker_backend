@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class RewardServiceImpl implements RewardService {
                     requestDto.getPointsRequired()
             );
 
-            reward = rewardRepository.save(reward);
+            rewardRepository.save(reward);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new ApiResponseDto<>(
@@ -57,7 +56,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to create reward: " + e.getMessage());
+            log.error("Failed to create reward: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to create reward: Try again later!");
         }
     }
@@ -86,7 +85,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to update reward: " + e.getMessage());
+            log.error("Failed to update reward: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to update reward: Try again later!");
         }
     }
@@ -108,7 +107,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get reward: " + e.getMessage());
+            log.error("Failed to get reward: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get reward: Try again later!");
         }
     }
@@ -123,7 +122,7 @@ public class RewardServiceImpl implements RewardService {
             List<Reward> rewards = rewardRepository.findByUser(user);
             List<RewardResponseDto> responseDtos = new ArrayList<>();
 
-            Integer userPoints = getUserPointsValue(userId);
+            int userPoints = getUserPointsValue(userId);
 
             for (Reward reward : rewards) {
                 RewardResponseDto dto = mapToResponseDto(reward);
@@ -139,7 +138,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get rewards: " + e.getMessage());
+            log.error("Failed to get rewards: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get rewards: Try again later!");
         }
     }
@@ -154,7 +153,7 @@ public class RewardServiceImpl implements RewardService {
             List<Reward> rewards = rewardRepository.findAvailableRewardsByUser(user);
             List<RewardResponseDto> responseDtos = new ArrayList<>();
 
-            Integer userPoints = getUserPointsValue(userId);
+            int userPoints = getUserPointsValue(userId);
 
             for (Reward reward : rewards) {
                 RewardResponseDto dto = mapToResponseDto(reward);
@@ -170,7 +169,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get available rewards: " + e.getMessage());
+            log.error("Failed to get available rewards: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get available rewards: Try again later!");
         }
     }
@@ -197,7 +196,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get redeemed rewards: " + e.getMessage());
+            log.error("Failed to get redeemed rewards: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get redeemed rewards: Try again later!");
         }
     }
@@ -220,7 +219,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to delete reward: " + e.getMessage());
+            log.error("Failed to delete reward: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to delete reward: Try again later!");
         }
     }
@@ -260,7 +259,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to redeem reward: " + e.getMessage());
+            log.error("Failed to redeem reward: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to redeem reward: " + e.getMessage());
         }
     }
@@ -282,7 +281,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get user points: " + e.getMessage());
+            log.error("Failed to get user points: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get user points: Try again later!");
         }
     }
@@ -306,7 +305,7 @@ public class RewardServiceImpl implements RewardService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to add user points: " + e.getMessage());
+            log.error("Failed to add user points: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to add user points: Try again later!");
         }
     }
