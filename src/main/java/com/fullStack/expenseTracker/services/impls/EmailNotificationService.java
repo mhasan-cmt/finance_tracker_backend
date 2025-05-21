@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fullStack.expenseTracker.services.NotificationService;
@@ -15,7 +16,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailAuthenticationException;
@@ -111,7 +111,7 @@ public class EmailNotificationService implements NotificationService {
             throw new MessagingException("Email authentication failed. Please check your email configuration. " +
                     "If using Gmail, make sure you're using an App Password, not your regular password.", e);
         } catch (MailSendException e) {
-            if (e.getMessage().contains("authentication failed") || e.getCause() instanceof AuthenticationFailedException) {
+            if (Objects.requireNonNull(e.getMessage()).contains("authentication failed") || e.getCause() instanceof AuthenticationFailedException) {
                 log.error("Email authentication failed. Please check your GMAIL_USER and GMAIL_APP_PASSWORD environment variables. " +
                         "For Gmail, you need to use an App Password, not your regular password. " +
                         "See https://support.google.com/accounts/answer/185833 for instructions on creating an App Password.");
@@ -176,7 +176,7 @@ public class EmailNotificationService implements NotificationService {
             throw new MessagingException("Email authentication failed. Please check your email configuration. " +
                     "If using Gmail, make sure you're using an App Password, not your regular password.", e);
         } catch (MailSendException e) {
-            if (e.getMessage().contains("authentication failed") || e.getCause() instanceof AuthenticationFailedException) {
+            if (Objects.requireNonNull(e.getMessage()).contains("authentication failed") || e.getCause() instanceof AuthenticationFailedException) {
                 log.error("Email authentication failed. Please check your GMAIL_USER and GMAIL_APP_PASSWORD environment variables. " +
                         "For Gmail, you need to use an App Password, not your regular password. " +
                         "See https://support.google.com/accounts/answer/185833 for instructions on creating an App Password.");
