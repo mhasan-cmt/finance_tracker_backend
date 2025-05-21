@@ -103,7 +103,7 @@ public class CategoryServiceImpl implements CategoryService {
             throws TransactionTypeNotFoundException, CategoryServiceLogicException, CategoryAlreadyExistsException, UserNotFoundException {
 
         // Get user by ID
-        User user = null;
+        User user;
         if (categoryRequestDto.getUserId() != null) {
             user = userRepository.findById(categoryRequestDto.getUserId())
                     .orElseThrow(() -> new UserNotFoundException("User not found with id: " + categoryRequestDto.getUserId()));

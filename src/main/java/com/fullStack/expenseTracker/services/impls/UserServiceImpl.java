@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
                 Path targetLocation = Paths.get(userProfileUploadDir).resolve(newFileName);
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
                 user.setProfileImgUrl(String.valueOf(targetLocation));
-                User savedUser = userRepository.save(user);
+                userRepository.save(user);
                 return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
                         ApiResponseStatus.SUCCESS,
                         HttpStatus.CREATED,

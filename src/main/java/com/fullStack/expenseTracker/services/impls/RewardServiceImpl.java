@@ -47,7 +47,7 @@ public class RewardServiceImpl implements RewardService {
                     requestDto.getPointsRequired()
             );
 
-            reward = rewardRepository.save(reward);
+            rewardRepository.save(reward);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new ApiResponseDto<>(
@@ -123,7 +123,7 @@ public class RewardServiceImpl implements RewardService {
             List<Reward> rewards = rewardRepository.findByUser(user);
             List<RewardResponseDto> responseDtos = new ArrayList<>();
 
-            Integer userPoints = getUserPointsValue(userId);
+            int userPoints = getUserPointsValue(userId);
 
             for (Reward reward : rewards) {
                 RewardResponseDto dto = mapToResponseDto(reward);
@@ -154,7 +154,7 @@ public class RewardServiceImpl implements RewardService {
             List<Reward> rewards = rewardRepository.findAvailableRewardsByUser(user);
             List<RewardResponseDto> responseDtos = new ArrayList<>();
 
-            Integer userPoints = getUserPointsValue(userId);
+            int userPoints = getUserPointsValue(userId);
 
             for (Reward reward : rewards) {
                 RewardResponseDto dto = mapToResponseDto(reward);

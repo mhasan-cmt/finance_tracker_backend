@@ -63,7 +63,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     category
             );
 
-            savingsGoal = savingsGoalRepository.save(savingsGoal);
+            savingsGoalRepository.save(savingsGoal);
 
             // Award points for creating a savings goal
             rewardService.addUserPoints(user.getId(), 10);

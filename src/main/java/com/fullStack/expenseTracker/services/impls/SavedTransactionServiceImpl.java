@@ -48,7 +48,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                     .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
 
             SavedTransaction plannedTransaction = savedTransactionDtoToEntity(requestDto);
-            plannedTransaction = savedTransactionRepository.save(plannedTransaction);
+            savedTransactionRepository.save(plannedTransaction);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new ApiResponseDto<>(
@@ -57,7 +57,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                             "Transaction has been successfully created!"
                     )
             );
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new UserServiceLogicException("Failed to create transaction. Try again later");
         }
     }
@@ -70,6 +70,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 SavedTransaction plannedTransaction = savedTransactionRepository.findById(savedTransactionId)
                         .orElse(null);
 
+                assert plannedTransaction != null;
                 transactionRepository.save(savedTransactionToTransaction(plannedTransaction));
 
                 LocalDate upcomingDate = getUpcomingDate(plannedTransaction.getFrequency(), plannedTransaction.getUpcomingDate());
@@ -85,7 +86,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                         )
                 );
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new UserServiceLogicException("Failed to add transaction. Try again later");
         }
         throw new TransactionNotFoundException("Transaction not found with id: " + savedTransactionId);
@@ -99,6 +100,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 SavedTransaction plannedTransaction = savedTransactionRepository.findById(plannedTransactionId)
                         .orElse(null);
 
+                assert plannedTransaction != null;
                 plannedTransaction.setTransactionType(categoryService.getCategoryById(requestDto.getCategoryId()).getTransactionType());
                 plannedTransaction.setCategory(categoryService.getCategoryById(requestDto.getCategoryId()));
                 plannedTransaction.setUser(userRepository.findById(requestDto.getUserId())
@@ -108,7 +110,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 plannedTransaction.setFrequency(requestDto.getFrequency());
                 plannedTransaction.setUpcomingDate(requestDto.getUpcomingDate());
 
-                plannedTransaction = savedTransactionRepository.save(plannedTransaction);
+                savedTransactionRepository.save(plannedTransaction);
 
                 return ResponseEntity.status(HttpStatus.OK).body(
                         new ApiResponseDto<>(
@@ -118,7 +120,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                         )
                 );
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new UserServiceLogicException("Failed to edit transaction. Try again later");
         }
         throw new TransactionNotFoundException("Transaction not found with id: " + plannedTransactionId);
@@ -140,7 +142,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                         )
                 );
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new UserServiceLogicException("Failed to delete transaction. Try again later.");
         }
         throw new TransactionNotFoundException("Transaction not found with id: " + plannedTransactionId);
@@ -153,6 +155,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                 SavedTransaction plannedTransaction = savedTransactionRepository.findById(savedTransactionId)
                         .orElse(null);
 
+                assert plannedTransaction != null;
                 LocalDate upcomingDate = getUpcomingDate(plannedTransaction.getFrequency(), plannedTransaction.getUpcomingDate());
 
                 plannedTransaction.setUpcomingDate(upcomingDate);
@@ -166,7 +169,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                         )
                 );
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new UserServiceLogicException("Failed to add transaction. Try again later");
         }
         throw new TransactionNotFoundException("Transaction not found with id: " + savedTransactionId);
@@ -182,7 +185,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
 
             List<SavedTransactionResponseDto> response = new ArrayList<>();
 
-            for (SavedTransaction t: transactions) {
+            for (SavedTransaction t : transactions) {
                 response.add(savedTransactionToDto(t));
             }
             return ResponseEntity.status(HttpStatus.OK).body(
@@ -192,7 +195,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                             response
                     )
             );
-        }catch(Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             throw new UserServiceLogicException("Failed to fetch transactions. Try again later");
         }
@@ -210,7 +213,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
 
             List<SavedTransactionResponseDto> response = new ArrayList<>();
 
-            for (SavedTransaction t: transactions) {
+            for (SavedTransaction t : transactions) {
                 response.add(savedTransactionToDto(t));
             }
 
@@ -221,7 +224,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                             response
                     )
             );
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new UserServiceLogicException("Failed to fetch transactions. Try again later");
         }
     }
@@ -243,7 +246,7 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
                         )
                 );
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new UserServiceLogicException("Failed to fetch transaction. Try again later.");
         }
         throw new TransactionNotFoundException("Transaction not found with id: " + savedTransactionId);
@@ -310,9 +313,9 @@ public class SavedTransactionServiceImpl implements SavedTransactionService {
         }
         if (Objects.equals(transaction.getUpcomingDate(), LocalDate.now().minusDays(1)))
             return "1 day overdue";
-        if (transaction.getUpcomingDate().isBefore(LocalDate.now())){
+        if (transaction.getUpcomingDate().isBefore(LocalDate.now())) {
             Period period = Period.between(transaction.getUpcomingDate(), LocalDate.now());
-            long days =period.getYears()* 365L + period.getMonths()* 30L + period.getDays();
+            long days = period.getYears() * 365L + period.getMonths() * 30L + period.getDays();
             return days + " days overdue";
         }
         return "Due on " + transaction.getUpcomingDate();

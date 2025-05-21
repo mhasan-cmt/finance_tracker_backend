@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 public class JwtResponseDto {
     private String token;
-    private String type = "Bearer";
+    private String type;
     private Long id;
     private String username;
     private String email;
