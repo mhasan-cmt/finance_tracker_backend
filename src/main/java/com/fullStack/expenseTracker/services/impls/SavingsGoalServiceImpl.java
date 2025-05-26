@@ -27,7 +27,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -76,7 +75,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to create savings goal: " + e.getMessage());
+            log.error("Failed to create savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to create savings goal: Try again later!");
         }
     }
@@ -113,7 +112,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to update savings goal: " + e.getMessage());
+            log.error("Failed to update savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to update savings goal: Try again later!");
         }
     }
@@ -135,7 +134,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get savings goal: " + e.getMessage());
+            log.error("Failed to get savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get savings goal: Try again later!");
         }
     }
@@ -162,7 +161,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get savings goals: " + e.getMessage());
+            log.error("Failed to get savings goals: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get savings goals: Try again later!");
         }
     }
@@ -189,7 +188,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get active savings goals: " + e.getMessage());
+            log.error("Failed to get active savings goals: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get active savings goals: Try again later!");
         }
     }
@@ -216,7 +215,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get completed savings goals: " + e.getMessage());
+            log.error("Failed to get completed savings goals: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get completed savings goals: Try again later!");
         }
     }
@@ -239,7 +238,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to delete savings goal: " + e.getMessage());
+            log.error("Failed to delete savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to delete savings goal: Try again later!");
         }
     }
@@ -289,7 +288,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to add contribution: " + e.getMessage());
+            log.error("Failed to add contribution: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to add contribution: Try again later!");
         }
     }
@@ -312,7 +311,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get contributions: " + e.getMessage());
+            log.error("Failed to get contributions: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get contributions: Try again later!");
         }
     }

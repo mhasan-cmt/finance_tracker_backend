@@ -3,7 +3,6 @@ package com.fullStack.expenseTracker.controllers;
 import com.fullStack.expenseTracker.services.TransactionTypeService;
 import com.fullStack.expenseTracker.models.TransactionType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

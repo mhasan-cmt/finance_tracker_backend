@@ -1,11 +1,7 @@
 package com.fullStack.expenseTracker.repository;
 
-import com.fullStack.expenseTracker.dto.reponses.TransactionsMonthlySummaryDto;
 import com.fullStack.expenseTracker.models.Transaction;
-import com.fullStack.expenseTracker.models.TransactionType;
-import com.fullStack.expenseTracker.models.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
