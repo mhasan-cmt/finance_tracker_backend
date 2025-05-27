@@ -9,10 +9,10 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   mail:
-    host: smtp.gmail.com
+    host: ${EMAIL_HOST}
     port: 587
-    username: ${GMAIL_USER}
-    password: ${GMAIL_APP_PASSWORD}
+    username: ${EMAIL_USER}
+    password: ${EMAIL_APP_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true

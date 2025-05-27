@@ -1,6 +1,7 @@
 package com.fullStack.expenseTracker.repository;
 
 import com.fullStack.expenseTracker.dto.reponses.TransactionsMonthlySummaryDto;
+import com.fullStack.expenseTracker.enums.ETransactionType;
 import com.fullStack.expenseTracker.models.Transaction;
 import com.fullStack.expenseTracker.models.TransactionType;
 import com.fullStack.expenseTracker.models.User;
@@ -19,25 +20,21 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Boolean existsByUser_Id(Long userId);
 
-@Query(value = "SELECT t.* FROM transaction t " +
-        "JOIN category c ON t.category_id = c.category_id " +
-        "JOIN users u ON t.user_id = u.id " +
-        "JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id " +
-        "WHERE u.email = :email " +
-        "AND tt.transaction_type_name LIKE CONCAT('%', :transactionType, '%') " +
-        "AND (t.description LIKE CONCAT('%', :searchKey, '%') OR c.category_name LIKE CONCAT('%', :searchKey, '%'))",
-        countQuery = "SELECT COUNT(*) FROM transaction t " +
-        "JOIN category c ON t.category_id = c.category_id " +
-        "JOIN users u ON t.user_id = u.id " +
-        "JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id " +
-        "WHERE u.email = :email " +
-        "AND tt.transaction_type_name LIKE CONCAT('%', :transactionType, '%') " +
-        "AND (t.description LIKE CONCAT('%', :searchKey, '%') OR c.category_name LIKE CONCAT('%', :searchKey, '%'))",
-        nativeQuery = true)
-Page<Transaction> findByUser(@Param("email") String email,
-                             Pageable pageable,
-                             @Param("searchKey") String searchKey,
-                             @Param("transactionType") String transactionType);
+    @Query("SELECT t FROM Transaction t " +
+            "JOIN t.category c " +
+            "JOIN t.user u " +
+            "JOIN c.transactionType tt " +
+            "WHERE u.email = :email " +
+            "AND (:transactionType IS NULL OR tt.transactionTypeName = :transactionType) " +
+            "AND (LOWER(t.description) LIKE LOWER(CONCAT('%', :searchKey, '%')) " +
+            "     OR LOWER(c.categoryName) LIKE LOWER(CONCAT('%', :searchKey, '%')))")
+    Page<Transaction> findByUser(@Param("email") String email,
+                                 Pageable pageable,
+                                 @Param("searchKey") String searchKey,
+                                 @Param("transactionType") ETransactionType transactionType);
+
+
+
 
     @Query(value = "SELECT t.*, c.category_id AS c_category_id, c.category_name AS c_category_name, " +
             "u.id AS u_id, u.email AS u_email, " +

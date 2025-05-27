@@ -62,8 +62,8 @@ public class EmailNotificationService implements NotificationService {
     @Override
     public void sendUserRegistrationVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
         String toAddress = user.getEmail();
-        String fromAddress = fromMail;
-        String senderName = "Fitrack";
+        String fromAddress = "21223203103@cse.bubt.edu.bd";
+        String senderName = "Fitrack - Finance Tracker";
         String subject = "Please verify your registration";
 
         // Prepare template placeholders
@@ -128,7 +128,7 @@ public class EmailNotificationService implements NotificationService {
 
     public void sendForgotPasswordVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
         String toAddress = user.getEmail();
-        String fromAddress = fromMail;
+        String fromAddress = "21223203103@cse.bubt.edu.bd";
         String senderName = "Fitrack";
         String subject = "Forgot password - Please verify your Account";
 

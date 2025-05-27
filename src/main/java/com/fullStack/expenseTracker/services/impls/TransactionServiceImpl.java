@@ -2,6 +2,7 @@ package com.fullStack.expenseTracker.services.impls;
 
 import com.fullStack.expenseTracker.dto.reponses.*;
 import com.fullStack.expenseTracker.enums.ApiResponseStatus;
+import com.fullStack.expenseTracker.enums.ETransactionType;
 import com.fullStack.expenseTracker.exceptions.*;
 import com.fullStack.expenseTracker.services.CategoryService;
 import com.fullStack.expenseTracker.services.TransactionService;
@@ -69,9 +70,14 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Pageable pageable =  PageRequest.of(pageNumber, pageSize).withSort(direction, sortField);
+        ETransactionType type =null;
+        if (transactionType!=null && !transactionType.isEmpty()) {
+            type = transactionType.equals("2")?ETransactionType.TYPE_INCOME: ETransactionType.TYPE_EXPENSE;
+        }
+
 
         Page<Transaction> transactions = transactionRepository.findByUser(email,
-                pageable, searchKey, transactionType);
+                pageable, searchKey, type);
 
         try {
             if (transactions.getTotalElements() == 0) {
