@@ -17,7 +17,6 @@ import com.fullStack.expenseTracker.repository.CategoryRepository;
 import com.fullStack.expenseTracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -93,7 +92,7 @@ public class CategoryServiceImpl implements CategoryService {
                     )
             );
         }catch(Exception e) {
-            log.error("Failed to add new category: " + e.getMessage());
+            log.error("Failed to add new category: {}", e.getMessage());
             throw new CategoryServiceLogicException("Failed to add new category: Try again later!");
         }
     }
@@ -134,7 +133,7 @@ public class CategoryServiceImpl implements CategoryService {
                     )
             );
         }catch(Exception e) {
-            log.error("Failed to add new category: " + e.getMessage());
+            log.error("Failed to add new category: {}", e.getMessage());
             throw new CategoryServiceLogicException("Failed to add new category: Try again later!");
         }
     }
@@ -164,7 +163,7 @@ public class CategoryServiceImpl implements CategoryService {
                     )
             );
         }catch(Exception e) {
-            log.error("Failed to update category: " + e.getMessage());
+            log.error("Failed to update category: {}", e.getMessage());
             throw new CategoryServiceLogicException("Failed to update category: Try again later!");
         }
     }
@@ -185,7 +184,7 @@ public class CategoryServiceImpl implements CategoryService {
                     )
             );
         }catch(Exception e) {
-            log.error("Failed to enable/disable category: " + e.getMessage());
+            log.error("Failed to enable/disable category: {}", e.getMessage());
             throw new CategoryServiceLogicException("Failed to update category: Try again later!");
         }
     }
