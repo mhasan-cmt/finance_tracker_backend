@@ -82,4 +82,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             "WHERE u.email = :email and t.date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 MONTH) " +
             "GROUP BY YEAR(t.date), MONTH(t.date)", nativeQuery = true)
     List<Object[]> findMonthlySummaryByUser(@Param("email") String email);
+
+    @Query("SELECT c.categoryId, c.transactionType.transactionTypeName, c.categoryName, SUM(t.amount) " +
+            "FROM Transaction t JOIN t.category c " +
+            "WHERE t.user.id = :userId " +
+            "GROUP BY c.categoryId, c.transactionType, c.categoryName")
+    List<Object[]> findTotalAmountByAllCategories(@Param("userId") Long userId);
+
 }

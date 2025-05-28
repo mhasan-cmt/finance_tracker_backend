@@ -1,8 +1,10 @@
 package com.fullStack.expenseTracker.services.impls;
 
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
+import com.fullStack.expenseTracker.dto.reponses.TransactionSummaryByCategory;
 import com.fullStack.expenseTracker.enums.ApiResponseStatus;
 import com.fullStack.expenseTracker.dto.reponses.TransactionsMonthlySummaryDto;
+import com.fullStack.expenseTracker.enums.ETransactionType;
 import com.fullStack.expenseTracker.repository.TransactionRepository;
 import com.fullStack.expenseTracker.services.ReportService;
 import lombok.RequiredArgsConstructor;
@@ -69,4 +71,27 @@ public class ReportServiceImpl implements ReportService {
                 )
         );
     }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByCategory(Long userID) {
+
+        List<Object[]> result = transactionRepository.findTotalAmountByAllCategories(userID);
+
+        List<TransactionSummaryByCategory> transactionsMonthlySummary = result.stream()
+                .map(data -> new TransactionSummaryByCategory(
+                        (int) data[0],
+                        ((ETransactionType) data[1]).name(),
+                        (String) data[2],
+                        (double) data[3]
+                )).toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ApiResponseDto<>(ApiResponseStatus.SUCCESS,
+                        HttpStatus.OK,
+                        transactionsMonthlySummary
+                )
+        );
+    }
+
+
 }

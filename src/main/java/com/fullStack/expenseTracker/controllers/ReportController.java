@@ -1,12 +1,14 @@
 package com.fullStack.expenseTracker.controllers;
 
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
+import com.fullStack.expenseTracker.security.UserDetailsImpl;
 import com.fullStack.expenseTracker.services.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +53,13 @@ public class ReportController {
     @PreAuthorize(("hasRole('ROLE_USER')"))
     public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(@Param("email") String email) {
         return reportService.getMonthlySummaryByUser(email);
+    }
+
+
+    @GetMapping("/getMonthlySummaryByCategory")
+    @PreAuthorize(("hasRole('ROLE_USER')"))
+    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(@AuthenticationPrincipal UserDetailsImpl principal) {
+        return reportService.getMonthlySummaryByCategory(principal.getId());
     }
 
 }
