@@ -12,7 +12,6 @@ import java.util.Date;
 @Data
 public class TransactionRequestDto {
 
-    @NotNull(message = "User email is required!")
     private String userEmail;
 
     @NotNull(message = "Category id is required!")
