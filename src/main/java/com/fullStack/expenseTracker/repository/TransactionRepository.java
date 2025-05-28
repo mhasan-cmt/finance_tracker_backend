@@ -46,16 +46,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Page<Transaction> findAll(Pageable pageable, @Param("searchKey") String searchKey);
 
 
-    @Query(value = "SELECT SUM(amount) FROM `transaction` t " +
+    @Query(value = "SELECT SUM(t.amount) FROM transaction t " +
             "JOIN users u ON t.user_id = u.id " +
             "JOIN category c ON t.category_id = c.category_id " +
             "JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id " +
             "WHERE u.id = :userId AND tt.transaction_type_id = :transactionTypeId " +
-            "AND MONTH(t.date) = :month AND YEAR(t.date) = :year", nativeQuery = true)
+            "AND EXTRACT(MONTH FROM t.date) = :month AND EXTRACT(YEAR FROM t.date) = :year", nativeQuery = true)
     Double findTotalByUserAndTransactionType(@Param("userId") long userId,
                                              @Param("transactionTypeId") Integer transactionTypeId,
                                              @Param("month") int month,
                                              @Param("year") int year);
+
 
     @Query(value = "SELECT COUNT(*) FROM `transaction` t JOIN users u ON t.user_id = u.id " +
             "WHERE u.id = :userId AND MONTH(t.date) = :month AND YEAR(t.date) = :year", nativeQuery = true)

@@ -25,11 +25,11 @@ public class ReportController {
 
     @GetMapping("/getTotalIncomeOrExpense")
     @PreAuthorize(("hasRole('ROLE_USER')"))
-    public ResponseEntity<ApiResponseDto<?>> getTotalIncomeOrExpense(@Param("userId") Long userId,
+    public ResponseEntity<ApiResponseDto<?>> getTotalIncomeOrExpense(@AuthenticationPrincipal UserDetailsImpl user,
                                                                      @Param("transactionTypeId") int transactionTypeId,
                                                                      @Param("month") int month,
                                                                      @Param("year") int year) {
-        return reportService.getTotalByTransactionTypeAndUser(userId, transactionTypeId, month, year);
+        return reportService.getTotalByTransactionTypeAndUser(user.getId(), transactionTypeId, month, year);
     }
 
     @GetMapping("/getTotalNoOfTransactions")
@@ -51,14 +51,14 @@ public class ReportController {
 
     @GetMapping("/getMonthlySummaryByUser")
     @PreAuthorize(("hasRole('ROLE_USER')"))
-    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(@Param("email") String email) {
-        return reportService.getMonthlySummaryByUser(email);
+    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(@AuthenticationPrincipal UserDetailsImpl principal) {
+        return reportService.getMonthlySummaryByUser(principal.getEmail());
     }
 
 
     @GetMapping("/getMonthlySummaryByCategory")
     @PreAuthorize(("hasRole('ROLE_USER')"))
-    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(@AuthenticationPrincipal UserDetailsImpl principal) {
+    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByCategory(@AuthenticationPrincipal UserDetailsImpl principal) {
         return reportService.getMonthlySummaryByCategory(principal.getId());
     }
 

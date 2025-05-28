@@ -70,9 +70,10 @@ public class TransactionController {
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponseDto<?>> updateTransaction(@Param("transactionId") Long transactionId,
-                                                               @RequestBody @Valid TransactionRequestDto transactionRequestDto)
+                                                               @RequestBody @Valid TransactionRequestDto transactionRequestDto,
+                                                               @AuthenticationPrincipal UserDetailsImpl principal)
             throws UserNotFoundException, CategoryNotFoundException, TransactionNotFoundException, TransactionServiceLogicException {
-
+        transactionRequestDto.setUserEmail(principal.getEmail());
         return transactionService.updateTransaction(transactionId, transactionRequestDto);
     }
 
