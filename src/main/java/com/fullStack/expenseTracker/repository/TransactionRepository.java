@@ -34,8 +34,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                  @Param("transactionType") ETransactionType transactionType);
 
 
-
-
     @Query(value = "SELECT t.*, c.category_id AS c_category_id, c.category_name AS c_category_name, " +
             "u.id AS u_id, u.email AS u_email, " +
             "tt.transaction_type_id AS tt_transaction_type_id, tt.transaction_type_name AS tt_transaction_type_name " +
@@ -72,17 +70,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                       @Param("month") int month,
                                       @Param("year") int year);
 
-    @Query(value = "SELECT " +
-            "MONTH(t.date), " +
-            "SUM(CASE WHEN tt.transaction_type_id = 1 THEN t.amount ELSE 0 END), " +
-            "SUM(CASE WHEN tt.transaction_type_id = 2 THEN t.amount ELSE 0 END) " +
-            "FROM transaction t " +
-            "JOIN users u on t.user_id = u.id " +
-            "JOIN category c on t.category_id = c.category_id " +
-            "JOIN transaction_type tt on c.transaction_type_id = tt.transaction_type_id " +
-            "WHERE u.email = :email and t.date >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 MONTH) " +
-            "GROUP BY YEAR(t.date), MONTH(t.date)", nativeQuery = true)
-    List<Object[]> findMonthlySummaryByUser(@Param("email") String email);
+@Query(value = "SELECT DATE_TRUNC('month', t.date) AS monthStart, " +
+        "SUM(CASE WHEN tt.transaction_type_name = 'INCOME' THEN t.amount ELSE 0 END), " +
+        "SUM(CASE WHEN tt.transaction_type_name = 'EXPENSE' THEN t.amount ELSE 0 END) " +
+        "FROM transaction t " +
+        "JOIN users u ON t.user_id = u.id " +
+        "JOIN category c ON t.category_id = c.category_id " +
+        "JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id " +
+        "WHERE u.email = :email AND t.date >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months' " +
+        "GROUP BY DATE_TRUNC('month', t.date) " +
+        "ORDER BY DATE_TRUNC('month', t.date)", nativeQuery = true)
+List<Object[]> findMonthlySummaryByUser(@Param("email") String email);
+
 
     @Query("SELECT c.categoryId, c.transactionType.transactionTypeName, c.categoryName, SUM(t.amount) " +
             "FROM Transaction t JOIN t.category c " +
