@@ -30,5 +30,5 @@ public interface UserService {
 
     ResponseEntity<ApiResponseDto<?>> deleteProfileImg(String email) throws UserServiceLogicException, UserNotFoundException;
 
-    ResponseEntity<ApiResponseDto<?>> updateUser(UpdateUserRequestDto updateUserRequestDto) throws UserNotFoundException, UserServiceLogicException;
+    ResponseEntity<ApiResponseDto<?>> updateUser(UpdateUserRequestDto updateUserRequestDto, String email) throws UserNotFoundException, UserServiceLogicException;
 }

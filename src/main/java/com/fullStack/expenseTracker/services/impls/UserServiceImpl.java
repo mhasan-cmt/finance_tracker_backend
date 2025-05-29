@@ -227,9 +227,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseEntity<ApiResponseDto<?>> updateUser(UpdateUserRequestDto updateUserRequestDto)
+    public ResponseEntity<ApiResponseDto<?>> updateUser(UpdateUserRequestDto updateUserRequestDto, String email)
             throws UserNotFoundException, UserServiceLogicException {
-        if (existsByEmail(updateUserRequestDto.email())) {
+        if (existsByEmail(email)) {
             try {
                 User user = findByEmail(updateUserRequestDto.email());
 

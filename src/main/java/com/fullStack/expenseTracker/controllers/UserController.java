@@ -1,5 +1,6 @@
 package com.fullStack.expenseTracker.controllers;
 
+import com.fullStack.expenseTracker.security.UserDetailsImpl;
 import com.fullStack.expenseTracker.services.AuthService;
 import com.fullStack.expenseTracker.services.UserService;
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -81,9 +83,11 @@ public class UserController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ApiResponseDto<?>> updateUser(@RequestBody @Valid UpdateUserRequestDto updateUserRequestDto)
+    public ResponseEntity<ApiResponseDto<?>> updateUser(@RequestBody @Valid UpdateUserRequestDto updateUserRequestDto, @AuthenticationPrincipal UserDetailsImpl user)
             throws UserNotFoundException, UserServiceLogicException {
-        return userService.updateUser(updateUserRequestDto);
+
+
+        return userService.updateUser(updateUserRequestDto, user.getEmail());
     }
 
     @GetMapping("/get")
