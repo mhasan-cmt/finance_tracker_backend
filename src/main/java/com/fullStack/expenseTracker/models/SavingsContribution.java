@@ -41,19 +41,4 @@ public class SavingsContribution {
     @JoinColumn(name = "transaction_id")
     @JsonIgnore
     private Transaction transaction;
-
-    public SavingsContribution(SavingsGoal savingsGoal, User user, double amount, Transaction transaction) {
-        this.savingsGoal = savingsGoal;
-        this.user = user;
-        this.amount = amount;
-        this.contributionDate = LocalDate.now();
-        this.transaction = transaction;
-    }
-
-    public SavingsContribution(SavingsGoal savingsGoal, User user, double amount) {
-        this.savingsGoal = savingsGoal;
-        this.user = user;
-        this.amount = amount;
-        this.contributionDate = LocalDate.now();
-    }
 }

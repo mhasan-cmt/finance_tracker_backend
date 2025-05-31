@@ -12,8 +12,18 @@ public interface ReportService {
 
     ResponseEntity<ApiResponseDto<?>> getTotalExpenseByCategoryAndUser(String email, int categoryId, int month, int year);
 
-    ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(String email);
+    ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(Long userID);
 
     ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByCategory(Long userId);
 
+    // ✅ Chart: Monthly income vs expense for a year (e.g., line chart)
+    ResponseEntity<ApiResponseDto<?>> getMonthlyIncomeExpenseChartData(Long userId, int year);
+
+    // ✅ Chart: Category-wise breakdown for pie chart
+    ResponseEntity<ApiResponseDto<?>> getCategoryBreakdownChartData(Long userId, int month, int year);
+
+    // ✅ Chart: Daily expense in a specific month for bar chart
+    ResponseEntity<ApiResponseDto<?>> getDailyExpenseChartData(Long userId, int month, int year);
 }
+
+

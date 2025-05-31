@@ -56,31 +56,40 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                              @Param("year") int year);
 
 
-    @Query(value = "SELECT COUNT(*) FROM `transaction` t JOIN users u ON t.user_id = u.id " +
-            "WHERE u.id = :userId AND MONTH(t.date) = :month AND YEAR(t.date) = :year", nativeQuery = true)
-    Integer findTotalNoOfTransactionsByUser(@Param("userId") long userId, @Param("month") int month, @Param("year") int year);
+    @Query(value = "SELECT COUNT(*) FROM transaction t JOIN users u ON t.user_id = u.id " +
+            "WHERE u.id = :userId AND date_part('month', t.date) = :month AND date_part('year', t.date) = :year",
+            nativeQuery = true)
+    Integer findTotalNoOfTransactionsByUser(@Param("userId") long userId,
+                                            @Param("month") int month,
+                                            @Param("year") int year);
 
-    @Query(value = "SELECT SUM(amount) FROM `transaction` t " +
+    @Query(value = "SELECT SUM(amount) FROM transaction t " +
             "JOIN users u ON t.user_id = u.id " +
             "JOIN category c ON t.category_id = c.category_id " +
-            "WHERE u.email = :email and c.category_id = :categoryId " +
-            "AND MONTH(t.date) = :month AND YEAR(t.date) = :year", nativeQuery = true)
+            "WHERE u.email = :email AND c.category_id = :categoryId " +
+            "AND EXTRACT(MONTH FROM t.date) = :month AND EXTRACT(YEAR FROM t.date) = :year",
+            nativeQuery = true)
     Double findTotalByUserAndCategory(@Param("email") String email,
                                       @Param("categoryId") int categoryId,
                                       @Param("month") int month,
                                       @Param("year") int year);
 
-@Query(value = "SELECT DATE_TRUNC('month', t.date) AS monthStart, " +
-        "SUM(CASE WHEN tt.transaction_type_name = 'INCOME' THEN t.amount ELSE 0 END), " +
-        "SUM(CASE WHEN tt.transaction_type_name = 'EXPENSE' THEN t.amount ELSE 0 END) " +
-        "FROM transaction t " +
-        "JOIN users u ON t.user_id = u.id " +
-        "JOIN category c ON t.category_id = c.category_id " +
-        "JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id " +
-        "WHERE u.email = :email AND t.date >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months' " +
-        "GROUP BY DATE_TRUNC('month', t.date) " +
-        "ORDER BY DATE_TRUNC('month', t.date)", nativeQuery = true)
-List<Object[]> findMonthlySummaryByUser(@Param("email") String email);
+    @Query(value = """
+            SELECT 
+                EXTRACT(MONTH FROM t.date) AS month_number,
+                EXTRACT(YEAR FROM t.date) AS year_number,
+                COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'INCOME' THEN t.amount ELSE 0 END), 0) AS income,
+                COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'EXPENSE' THEN t.amount ELSE 0 END), 0) AS expense
+            FROM transaction t
+            JOIN users u ON t.user_id = u.id
+            JOIN category c ON t.category_id = c.category_id
+            JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
+            WHERE u.id = :userId 
+            AND t.date >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months'
+            GROUP BY EXTRACT(MONTH FROM t.date), EXTRACT(YEAR FROM t.date)
+            ORDER BY year_number, month_number
+            """, nativeQuery = true)
+    List<Object[]> findMonthlySummaryByUser(@Param("userId") Long userId);
 
 
     @Query("SELECT c.categoryId, c.transactionType.transactionTypeName, c.categoryName, SUM(t.amount) " +
@@ -88,5 +97,66 @@ List<Object[]> findMonthlySummaryByUser(@Param("email") String email);
             "WHERE t.user.id = :userId " +
             "GROUP BY c.categoryId, c.transactionType, c.categoryName")
     List<Object[]> findTotalAmountByAllCategories(@Param("userId") Long userId);
+
+    @Query(value = """
+                WITH months AS (
+                    SELECT generate_series(1, 12) AS month
+                )
+                SELECT
+                    m.month,
+                    COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_INCOME' THEN t.amount ELSE 0 END), 0) AS income,
+                    COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_EXPENSE' THEN t.amount ELSE 0 END), 0) AS expense
+                FROM months m
+                LEFT JOIN transaction t ON 
+                    EXTRACT(MONTH FROM t.date) = m.month AND
+                    t.user_id = :userId AND
+                    EXTRACT(YEAR FROM t.date) = :year
+                LEFT JOIN category c ON t.category_id = c.category_id
+                LEFT JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
+                GROUP BY m.month
+                ORDER BY m.month
+            """, nativeQuery = true)
+    List<Object[]> sumIncomeAndExpenseByMonth(@Param("userId") Long userId, @Param("year") int year);
+
+
+    @Query(value = """
+                SELECT
+                    c.category_name AS categoryName,
+                    COALESCE(SUM(t.amount), 0) AS total
+                FROM transaction t
+                JOIN category c ON t.category_id = c.category_id
+                JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
+                WHERE
+                    t.user_id = :userId
+                    AND EXTRACT(MONTH FROM t.date) = :month
+                    AND EXTRACT(YEAR FROM t.date) = :year
+                    AND tt.transaction_type_name = 'TYPE_EXPENSE'
+                GROUP BY c.category_name
+                ORDER BY total DESC
+            """, nativeQuery = true)
+    List<Object[]> sumByCategory(@Param("userId") Long userId,
+                                 @Param("month") int month,
+                                 @Param("year") int year);
+
+
+    @Query(value = """
+                SELECT 
+                    EXTRACT(DAY FROM t.date)::integer AS day,
+                    COALESCE(SUM(t.amount), 0) AS total
+                FROM transaction t
+                JOIN category c ON t.category_id = c.category_id
+                JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
+                WHERE 
+                    t.user_id = :userId
+                    AND EXTRACT(MONTH FROM t.date) = :month
+                    AND EXTRACT(YEAR FROM t.date) = :year
+                    AND tt.transaction_type_name = 'TYPE_EXPENSE'
+                GROUP BY EXTRACT(DAY FROM t.date)
+                ORDER BY day
+            """, nativeQuery = true)
+    List<Object[]> sumExpenseByDay(@Param("userId") Long userId,
+                                   @Param("month") int month,
+                                   @Param("year") int year);
+
 
 }

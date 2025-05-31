@@ -74,13 +74,6 @@ public class SavingsGoalController {
         return savingsGoalService.deleteSavingsGoal(goalId);
     }
 
-    @PostMapping("/contribution/add")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponseDto<?>> addContribution(@RequestBody @Valid SavingsContributionRequestDto requestDto)
-            throws UserNotFoundException, UserServiceLogicException, TransactionNotFoundException {
-        return savingsGoalService.addContribution(requestDto);
-    }
-
     @GetMapping("/contribution/goal")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponseDto<?>> getContributionsByGoalId(@Param("goalId") Long goalId)

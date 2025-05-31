@@ -13,7 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -53,14 +56,14 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(String email) {
-        List<Object[]> result = transactionRepository.findMonthlySummaryByUser(email);
+    public ResponseEntity<ApiResponseDto<?>> getMonthlySummaryByUser(Long userID) {
+        List<Object[]> result = transactionRepository.findMonthlySummaryByUser(userID);
 
         List<TransactionsMonthlySummaryDto> transactionsMonthlySummary = result.stream()
                 .map(data -> new TransactionsMonthlySummaryDto(
-                        (int) data[0],
-                        (double) data[1],
-                        (double) data[2]
+                        ((Number) data[0]).intValue(),  // month
+                        ((Number) data[2]).doubleValue(),  // income
+                        ((Number) data[3]).doubleValue()   // expense
                 )).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -90,6 +93,52 @@ public class ReportServiceImpl implements ReportService {
                         transactionsMonthlySummary
                 )
         );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getMonthlyIncomeExpenseChartData(Long userId, int year) {
+        List<Object[]> monthlyData = transactionRepository.sumIncomeAndExpenseByMonth(userId, year);
+
+        List<Map<String, Object>> chartData = new ArrayList<>();
+        for (Object[] row : monthlyData) {
+            Map<String, Object> monthEntry = new HashMap<>();
+            monthEntry.put("month", row[0]);
+            monthEntry.put("income", row[1]);
+            monthEntry.put("expense", row[2]);
+            chartData.add(monthEntry);
+        }
+
+        return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getCategoryBreakdownChartData(Long userId, int month, int year) {
+        List<Object[]> categoryTotals = transactionRepository.sumByCategory(userId, month, year);
+
+        List<Map<String, Object>> chartData = new ArrayList<>();
+        for (Object[] row : categoryTotals) {
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("category", row[0]);
+            entry.put("total", row[1]);
+            chartData.add(entry);
+        }
+
+        return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getDailyExpenseChartData(Long userId, int month, int year) {
+        List<Object[]> dailyExpenses = transactionRepository.sumExpenseByDay(userId, month, year);
+
+        List<Map<String, Object>> chartData = new ArrayList<>();
+        for (Object[] row : dailyExpenses) {
+            Map<String, Object> dayEntry = new HashMap<>();
+            dayEntry.put("day", row[0]);
+            dayEntry.put("amount", row[1]);
+            chartData.add(dayEntry);
+        }
+
+        return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
     }
 
 

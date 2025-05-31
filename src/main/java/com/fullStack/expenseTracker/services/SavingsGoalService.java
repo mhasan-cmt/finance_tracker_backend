@@ -33,9 +33,6 @@ public interface SavingsGoalService {
     ResponseEntity<ApiResponseDto<?>> deleteSavingsGoal(Long goalId) 
             throws UserServiceLogicException;
     
-    ResponseEntity<ApiResponseDto<?>> addContribution(SavingsContributionRequestDto requestDto) 
-            throws UserNotFoundException, UserServiceLogicException, TransactionNotFoundException;
-    
     ResponseEntity<ApiResponseDto<?>> getContributionsByGoalId(Long goalId) 
             throws UserServiceLogicException;
 }

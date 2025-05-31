@@ -15,7 +15,6 @@ import com.fullStack.expenseTracker.repository.SavingsGoalRepository;
 import com.fullStack.expenseTracker.repository.TransactionRepository;
 import com.fullStack.expenseTracker.repository.UserRepository;
 import com.fullStack.expenseTracker.services.CategoryService;
-import com.fullStack.expenseTracker.services.RewardService;
 import com.fullStack.expenseTracker.services.SavingsGoalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -39,7 +37,6 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final TransactionRepository transactionRepository;
-    private final RewardService rewardService;
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> createSavingsGoal(SavingsGoalRequestDto requestDto)
@@ -65,8 +62,6 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
 
             savingsGoalRepository.save(savingsGoal);
 
-            // Award points for creating a savings goal
-            rewardService.addUserPoints(user.getId(), 10);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new ApiResponseDto<>(
@@ -241,56 +236,6 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
         } catch (Exception e) {
             log.error("Failed to delete savings goal: " + e.getMessage());
             throw new UserServiceLogicException("Failed to delete savings goal: Try again later!");
-        }
-    }
-
-    @Override
-    public ResponseEntity<ApiResponseDto<?>> addContribution(SavingsContributionRequestDto requestDto)
-            throws UserNotFoundException, UserServiceLogicException, TransactionNotFoundException {
-        try {
-            User user = userRepository.findById(requestDto.getUserId())
-                    .orElseThrow(() -> new UserNotFoundException("User not found with id: " + requestDto.getUserId()));
-
-            SavingsGoal savingsGoal = savingsGoalRepository.findById(requestDto.getGoalId())
-                    .orElseThrow(() -> new UserServiceLogicException("Savings goal not found with id: " + requestDto.getGoalId()));
-
-            Transaction transaction = null;
-            if (requestDto.getTransactionId() != null) {
-                transaction = transactionRepository.findById(requestDto.getTransactionId())
-                        .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id: " + requestDto.getTransactionId()));
-            }
-
-            SavingsContribution contribution;
-            if (transaction != null) {
-                contribution = new SavingsContribution(savingsGoal, user, requestDto.getAmount(), transaction);
-            } else {
-                contribution = new SavingsContribution(savingsGoal, user, requestDto.getAmount());
-            }
-
-            savingsContributionRepository.save(contribution);
-
-            // Update the savings goal's current amount
-            savingsGoal.addContribution(requestDto.getAmount());
-            savingsGoalRepository.save(savingsGoal);
-
-            // Award points for making a contribution
-            rewardService.addUserPoints(user.getId(), 5);
-
-            // If goal is completed, award bonus points
-            if (savingsGoal.isCompleted()) {
-                rewardService.addUserPoints(user.getId(), 25);
-            }
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(
-                    new ApiResponseDto<>(
-                            ApiResponseStatus.SUCCESS,
-                            HttpStatus.CREATED,
-                            "Contribution added successfully!"
-                    )
-            );
-        } catch (Exception e) {
-            log.error("Failed to add contribution: " + e.getMessage());
-            throw new UserServiceLogicException("Failed to add contribution: Try again later!");
         }
     }
 
