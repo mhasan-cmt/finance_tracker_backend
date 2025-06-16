@@ -126,20 +126,21 @@ public class ReportServiceImpl implements ReportService {
         return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
     }
 
-    @Override
-    public ResponseEntity<ApiResponseDto<?>> getDailyExpenseChartData(Long userId, int month, int year) {
-        List<Object[]> dailyExpenses = transactionRepository.sumExpenseByDay(userId, month, year);
+@Override
+public ResponseEntity<ApiResponseDto<?>> getDailyIncomeExpenseChartData(Long userId, int month, int year) {
+    List<Object[]> dailyData = transactionRepository.sumIncomeAndExpenseByDay(userId, month, year);
 
-        List<Map<String, Object>> chartData = new ArrayList<>();
-        for (Object[] row : dailyExpenses) {
-            Map<String, Object> dayEntry = new HashMap<>();
-            dayEntry.put("day", row[0]);
-            dayEntry.put("amount", row[1]);
-            chartData.add(dayEntry);
-        }
-
-        return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
+    List<Map<String, Object>> chartData = new ArrayList<>();
+    for (Object[] row : dailyData) {
+        Map<String, Object> dayEntry = new HashMap<>();
+        dayEntry.put("day", row[0]);
+        dayEntry.put("income", row[1]);
+        dayEntry.put("expense", row[2]);
+        chartData.add(dayEntry);
     }
+
+    return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
+}
 
 
 }

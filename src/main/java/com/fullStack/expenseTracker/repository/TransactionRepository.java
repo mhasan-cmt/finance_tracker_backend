@@ -142,7 +142,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query(value = """
                 SELECT 
                     EXTRACT(DAY FROM t.date)::integer AS day,
-                    COALESCE(SUM(t.amount), 0) AS total
+                    COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_INCOME' THEN t.amount ELSE 0 END), 0) AS income,
+                    COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_EXPENSE' THEN t.amount ELSE 0 END), 0) AS expense
                 FROM transaction t
                 JOIN category c ON t.category_id = c.category_id
                 JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
@@ -150,13 +151,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                     t.user_id = :userId
                     AND EXTRACT(MONTH FROM t.date) = :month
                     AND EXTRACT(YEAR FROM t.date) = :year
-                    AND tt.transaction_type_name = 'TYPE_EXPENSE'
                 GROUP BY EXTRACT(DAY FROM t.date)
                 ORDER BY day
             """, nativeQuery = true)
-    List<Object[]> sumExpenseByDay(@Param("userId") Long userId,
-                                   @Param("month") int month,
-                                   @Param("year") int year);
-
-
+    List<Object[]> sumIncomeAndExpenseByDay(@Param("userId") Long userId,
+                                            @Param("month") int month,
+                                            @Param("year") int year);
 }
