@@ -3,7 +3,6 @@ package com.fullStack.expenseTracker.security;
 import com.fullStack.expenseTracker.models.User;
 import com.fullStack.expenseTracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
