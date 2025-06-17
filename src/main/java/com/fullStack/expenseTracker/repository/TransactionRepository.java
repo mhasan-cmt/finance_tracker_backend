@@ -1,12 +1,8 @@
 package com.fullStack.expenseTracker.repository;
 
-import com.fullStack.expenseTracker.dto.reponses.TransactionsMonthlySummaryDto;
 import com.fullStack.expenseTracker.enums.ETransactionType;
 import com.fullStack.expenseTracker.models.Transaction;
-import com.fullStack.expenseTracker.models.TransactionType;
-import com.fullStack.expenseTracker.models.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -75,7 +71,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                       @Param("year") int year);
 
     @Query(value = """
-            SELECT 
+            SELECT
                 EXTRACT(MONTH FROM t.date) AS month_number,
                 EXTRACT(YEAR FROM t.date) AS year_number,
                 COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'INCOME' THEN t.amount ELSE 0 END), 0) AS income,
@@ -84,7 +80,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             JOIN users u ON t.user_id = u.id
             JOIN category c ON t.category_id = c.category_id
             JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
-            WHERE u.id = :userId 
+            WHERE u.id = :userId
             AND t.date >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '5 months'
             GROUP BY EXTRACT(MONTH FROM t.date), EXTRACT(YEAR FROM t.date)
             ORDER BY year_number, month_number
@@ -107,7 +103,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                     COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_INCOME' THEN t.amount ELSE 0 END), 0) AS income,
                     COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_EXPENSE' THEN t.amount ELSE 0 END), 0) AS expense
                 FROM months m
-                LEFT JOIN transaction t ON 
+                LEFT JOIN transaction t ON
                     EXTRACT(MONTH FROM t.date) = m.month AND
                     t.user_id = :userId AND
                     EXTRACT(YEAR FROM t.date) = :year
@@ -140,14 +136,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
 
     @Query(value = """
-                SELECT 
+                SELECT
                     EXTRACT(DAY FROM t.date)::integer AS day,
                     COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_INCOME' THEN t.amount ELSE 0 END), 0) AS income,
                     COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_EXPENSE' THEN t.amount ELSE 0 END), 0) AS expense
                 FROM transaction t
                 JOIN category c ON t.category_id = c.category_id
                 JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
-                WHERE 
+                WHERE
                     t.user_id = :userId
                     AND EXTRACT(MONTH FROM t.date) = :month
                     AND EXTRACT(YEAR FROM t.date) = :year
@@ -159,14 +155,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                             @Param("year") int year);
 
     @Query(value = """
-                SELECT 
+                SELECT
                     EXTRACT(YEAR FROM t.date) AS year,
                     COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_INCOME' THEN t.amount ELSE 0 END), 0) AS income,
                     COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_EXPENSE' THEN t.amount ELSE 0 END), 0) AS expense
                 FROM transaction t
                 JOIN category c ON t.category_id = c.category_id
                 JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
-                WHERE 
+                WHERE
                     t.user_id = :id
                     AND EXTRACT(YEAR FROM t.date) = :year
                 GROUP BY EXTRACT(YEAR FROM t.date)

@@ -1,7 +1,6 @@
 package com.fullStack.expenseTracker.controllers;
 
 import com.fullStack.expenseTracker.exceptions.*;
-import com.fullStack.expenseTracker.models.User;
 import com.fullStack.expenseTracker.security.UserDetailsImpl;
 import com.fullStack.expenseTracker.services.TransactionService;
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
@@ -9,7 +8,6 @@ import com.fullStack.expenseTracker.dto.requests.TransactionRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

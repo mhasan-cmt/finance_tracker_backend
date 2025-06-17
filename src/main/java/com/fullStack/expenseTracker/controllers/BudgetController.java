@@ -6,7 +6,6 @@ import com.fullStack.expenseTracker.exceptions.UserNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserServiceLogicException;
 import com.fullStack.expenseTracker.services.BudgetService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
