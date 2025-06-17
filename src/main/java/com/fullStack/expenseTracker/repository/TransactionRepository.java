@@ -157,4 +157,19 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Object[]> sumIncomeAndExpenseByDay(@Param("userId") Long userId,
                                             @Param("month") int month,
                                             @Param("year") int year);
+
+    @Query(value = """
+                SELECT 
+                    EXTRACT(YEAR FROM t.date) AS year,
+                    COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_INCOME' THEN t.amount ELSE 0 END), 0) AS income,
+                    COALESCE(SUM(CASE WHEN tt.transaction_type_name = 'TYPE_EXPENSE' THEN t.amount ELSE 0 END), 0) AS expense
+                FROM transaction t
+                JOIN category c ON t.category_id = c.category_id
+                JOIN transaction_type tt ON c.transaction_type_id = tt.transaction_type_id
+                WHERE 
+                    t.user_id = :id
+                    AND EXTRACT(YEAR FROM t.date) = :year
+                GROUP BY EXTRACT(YEAR FROM t.date)
+            """, nativeQuery = true)
+    List<Object[]> sumIncomeAndExpenseByYear(@Param("id") Long id, @Param("year") int year);
 }

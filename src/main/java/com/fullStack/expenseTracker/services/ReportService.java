@@ -22,8 +22,10 @@ public interface ReportService {
     // ✅ Chart: Category-wise breakdown for pie chart
     ResponseEntity<ApiResponseDto<?>> getCategoryBreakdownChartData(Long userId, int month, int year);
 
-// ✅ Chart: Daily income and expense in a specific month for bar chart
-ResponseEntity<ApiResponseDto<?>> getDailyIncomeExpenseChartData(Long userId, int month, int year);
+    // ✅ Chart: Daily income and expense in a specific month for bar chart
+    ResponseEntity<ApiResponseDto<?>> getDailyIncomeExpenseChartData(Long userId, int month, int year);
+
+    ResponseEntity<ApiResponseDto<?>> getYearlyIncomeExpenseChartData(Long id, int year);
 }
 
 

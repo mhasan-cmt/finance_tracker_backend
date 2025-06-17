@@ -85,4 +85,12 @@ public class ReportController {
             @RequestParam int year) {
         return reportService.getDailyIncomeExpenseChartData(user.getId(), month, year);
     }
+
+    @GetMapping("/chart/yearly-breakdown")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<ApiResponseDto<?>> getYearlyIncomeExpenseChartData(
+            @AuthenticationPrincipal UserDetailsImpl user,
+            @RequestParam int year) {
+        return reportService.getYearlyIncomeExpenseChartData(user.getId(), year);
+    }
 }

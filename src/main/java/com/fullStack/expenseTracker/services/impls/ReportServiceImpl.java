@@ -36,7 +36,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> getTotalNoOfTransactionsByUser(Long userId,  int month, int year) {
+    public ResponseEntity<ApiResponseDto<?>> getTotalNoOfTransactionsByUser(Long userId, int month, int year) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ApiResponseDto<>(ApiResponseStatus.SUCCESS,
                         HttpStatus.OK,
@@ -126,21 +126,35 @@ public class ReportServiceImpl implements ReportService {
         return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
     }
 
-@Override
-public ResponseEntity<ApiResponseDto<?>> getDailyIncomeExpenseChartData(Long userId, int month, int year) {
-    List<Object[]> dailyData = transactionRepository.sumIncomeAndExpenseByDay(userId, month, year);
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getDailyIncomeExpenseChartData(Long userId, int month, int year) {
+        List<Object[]> dailyData = transactionRepository.sumIncomeAndExpenseByDay(userId, month, year);
 
-    List<Map<String, Object>> chartData = new ArrayList<>();
-    for (Object[] row : dailyData) {
-        Map<String, Object> dayEntry = new HashMap<>();
-        dayEntry.put("day", row[0]);
-        dayEntry.put("income", row[1]);
-        dayEntry.put("expense", row[2]);
-        chartData.add(dayEntry);
+        List<Map<String, Object>> chartData = new ArrayList<>();
+        for (Object[] row : dailyData) {
+            Map<String, Object> dayEntry = new HashMap<>();
+            dayEntry.put("day", row[0]);
+            dayEntry.put("income", row[1]);
+            dayEntry.put("expense", row[2]);
+            chartData.add(dayEntry);
+        }
+
+        return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
     }
 
-    return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
-}
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getYearlyIncomeExpenseChartData(Long id, int year) {
+        List<Object[]> yearlyData = transactionRepository.sumIncomeAndExpenseByYear(id, year);
+        List<Map<String, Object>> chartData = new ArrayList<>();
+        for (Object[] row : yearlyData) {
+            Map<String, Object> yearEntry = new HashMap<>();
+            yearEntry.put("year", row[0]);
+            yearEntry.put("income", row[1]);
+            yearEntry.put("expense", row[2]);
+            chartData.add(yearEntry);
+        }
+        return ResponseEntity.ok(new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, chartData));
+    }
 
 
 }
