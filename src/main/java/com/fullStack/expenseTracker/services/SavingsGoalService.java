@@ -1,10 +1,8 @@
 package com.fullStack.expenseTracker.services;
 
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
-import com.fullStack.expenseTracker.dto.requests.SavingsContributionRequestDto;
 import com.fullStack.expenseTracker.dto.requests.SavingsGoalRequestDto;
 import com.fullStack.expenseTracker.exceptions.CategoryNotFoundException;
-import com.fullStack.expenseTracker.exceptions.TransactionNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserServiceLogicException;
 import org.springframework.http.ResponseEntity;

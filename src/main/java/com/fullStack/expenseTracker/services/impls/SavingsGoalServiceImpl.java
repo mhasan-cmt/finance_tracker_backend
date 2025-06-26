@@ -2,11 +2,9 @@ package com.fullStack.expenseTracker.services.impls;
 
 import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
 import com.fullStack.expenseTracker.dto.reponses.SavingsGoalResponseDto;
-import com.fullStack.expenseTracker.dto.requests.SavingsContributionRequestDto;
 import com.fullStack.expenseTracker.dto.requests.SavingsGoalRequestDto;
 import com.fullStack.expenseTracker.enums.ApiResponseStatus;
 import com.fullStack.expenseTracker.exceptions.CategoryNotFoundException;
-import com.fullStack.expenseTracker.exceptions.TransactionNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserNotFoundException;
 import com.fullStack.expenseTracker.exceptions.UserServiceLogicException;
 import com.fullStack.expenseTracker.models.*;
@@ -71,7 +69,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to create savings goal: " + e.getMessage());
+            log.error("Failed to create savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to create savings goal: Try again later!");
         }
     }
@@ -108,7 +106,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to update savings goal: " + e.getMessage());
+            log.error("Failed to update savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to update savings goal: Try again later!");
         }
     }
@@ -130,7 +128,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get savings goal: " + e.getMessage());
+            log.error("Failed to get savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get savings goal: Try again later!");
         }
     }
@@ -157,7 +155,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get savings goals: " + e.getMessage());
+            log.error("Failed to get savings goals: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get savings goals: Try again later!");
         }
     }
@@ -184,7 +182,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get active savings goals: " + e.getMessage());
+            log.error("Failed to get active savings goals: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get active savings goals: Try again later!");
         }
     }
@@ -211,7 +209,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get completed savings goals: " + e.getMessage());
+            log.error("Failed to get completed savings goals: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get completed savings goals: Try again later!");
         }
     }
@@ -234,7 +232,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to delete savings goal: " + e.getMessage());
+            log.error("Failed to delete savings goal: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to delete savings goal: Try again later!");
         }
     }
@@ -257,7 +255,7 @@ public class SavingsGoalServiceImpl implements SavingsGoalService {
                     )
             );
         } catch (Exception e) {
-            log.error("Failed to get contributions: " + e.getMessage());
+            log.error("Failed to get contributions: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to get contributions: Try again later!");
         }
     }
