@@ -1,6 +1,5 @@
 package com.fullStack.expenseTracker.dto.reponses;
 
-import com.fullStack.expenseTracker.enums.ETransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
