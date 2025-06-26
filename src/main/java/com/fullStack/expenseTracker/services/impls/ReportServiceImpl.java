@@ -37,13 +37,25 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getTotalNoOfTransactionsByUser(Long userId, int month, int year) {
+        List<Object[]> counts = transactionRepository.findTransactionCountsByType(userId, month, year);
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("income", 0);
+        result.put("expense", 0);
+
+        for (Object[] row : counts) {
+            Integer typeId = (Integer) row[0];
+            long count = ((Number) row[1]).longValue();
+
+            if (typeId == 1) result.put("income", (int) count);
+            else if (typeId == 2) result.put("expense", (int) count);
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ApiResponseDto<>(ApiResponseStatus.SUCCESS,
-                        HttpStatus.OK,
-                        transactionRepository.findTotalNoOfTransactionsByUser(userId, month, year)
-                )
+                new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, result)
         );
     }
+
 
     @Override
     public ResponseEntity<ApiResponseDto<?>> getTotalExpenseByCategoryAndUser(String email, int categoryId, int month, int year) {

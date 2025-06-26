@@ -64,6 +64,22 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                             @Param("month") int month,
                                             @Param("year") int year);
 
+    @Query(value = """
+            SELECT 
+                c.transaction_type_id,
+                COUNT(*) 
+            FROM transaction t
+            JOIN category c ON t.category_id = c.category_id
+            WHERE t.user_id = :userId
+              AND date_part('month', t.date) = :month
+              AND date_part('year', t.date) = :year
+            GROUP BY c.transaction_type_id
+            """, nativeQuery = true)
+    List<Object[]> findTransactionCountsByType(@Param("userId") long userId,
+                                               @Param("month") int month,
+                                               @Param("year") int year);
+
+
     @Query(value = "SELECT SUM(amount) FROM transaction t " +
             "JOIN users u ON t.user_id = u.id " +
             "JOIN category c ON t.category_id = c.category_id " +

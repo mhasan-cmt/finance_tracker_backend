@@ -1,14 +1,18 @@
 package com.fullStack.expenseTracker.controllers;
 
+import com.fullStack.expenseTracker.dto.reponses.ApiResponseDto;
 import com.fullStack.expenseTracker.dto.reponses.MonthlySummary;
+import com.fullStack.expenseTracker.enums.ApiResponseStatus;
 import com.fullStack.expenseTracker.repository.TransactionRepository;
 import com.fullStack.expenseTracker.security.UserDetailsImpl;
 import com.fullStack.expenseTracker.util.LinearRegressionUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -20,15 +24,22 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/prediction")
+@RequestMapping("/mywallet/api/prediction")
 @RequiredArgsConstructor
 public class PredictionController {
 
     private final TransactionRepository transactionRepo;
 
     @GetMapping("/next-month")
-    public ResponseEntity<?> predictNextMonth(@AuthenticationPrincipal UserDetailsImpl principal) {
-        List<Object[]> rawSummaries = transactionRepo.getMonthlySummariesNative(principal.getId(), 1);
+    public ResponseEntity<?> predictNextMonth(@AuthenticationPrincipal UserDetailsImpl principal, @RequestParam("type") int type) {
+
+        if (type != 1 && type != 2) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Invalid type. Must be 1 for income or 2 for expense.");
+            return ResponseEntity.badRequest().body(error);
+        }
+
+        List<Object[]> rawSummaries = transactionRepo.getMonthlySummariesNative(principal.getId(), type);
         List<MonthlySummary> summaries = rawSummaries.stream()
                 .map(row -> {
                     LocalDate date;
@@ -65,7 +76,9 @@ public class PredictionController {
         response.put("predictedAmount", roundedPrediction);
         response.put("type", 1);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ApiResponseDto<>(ApiResponseStatus.SUCCESS, HttpStatus.OK, response)
+        );
     }
 }
 
