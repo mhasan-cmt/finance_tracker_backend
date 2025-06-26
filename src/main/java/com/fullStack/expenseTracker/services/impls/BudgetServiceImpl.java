@@ -11,7 +11,6 @@ import com.fullStack.expenseTracker.repository.UserRepository;
 import com.fullStack.expenseTracker.services.BudgetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -50,7 +49,7 @@ public class BudgetServiceImpl implements BudgetService {
                     "Budget created successfully!"
             ));
         } catch (Exception e) {
-            log.error("Failed to fetch All users: " + e.getMessage());
+            log.error("Failed to fetch All users: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to create budget: Try again later!");
         }
 
@@ -68,7 +67,7 @@ public class BudgetServiceImpl implements BudgetService {
                     amount
             ));
         } catch (Exception e) {
-            log.error("Failed to fetch budget amount: " + e.getMessage());
+            log.error("Failed to fetch budget amount: {}", e.getMessage());
             throw new UserServiceLogicException("Failed to create budget: Try again later!");
         }
     }

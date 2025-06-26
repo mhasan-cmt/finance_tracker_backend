@@ -2,7 +2,6 @@ package com.fullStack.expenseTracker.dto.reponses;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.core.io.Resource;
 
 import java.util.List;
 
