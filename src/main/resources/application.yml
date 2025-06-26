@@ -5,9 +5,12 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+#    url: ${DB_URL}
+    url: jdbc:postgresql://ep-blue-dust-a14207tk-pooler.ap-southeast-1.aws.neon.tech/fitrack_db
+#    username: ${DB_USER}
+    username: fitrack_db_owner
+#    password: ${DB_PASSWORD}
+    password: npg_MtWOvl8aEYo5
   mail:
     host: ${EMAIL_HOST}
     port: 587

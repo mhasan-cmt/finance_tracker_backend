@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -19,7 +18,6 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/prediction")
@@ -29,9 +27,7 @@ public class PredictionController {
     private final TransactionRepository transactionRepo;
 
     @GetMapping("/next-month")
-    public ResponseEntity<?> predictNextMonth(
-            @AuthenticationPrincipal UserDetailsImpl principal
-    ) {
+    public ResponseEntity<?> predictNextMonth(@AuthenticationPrincipal UserDetailsImpl principal) {
         List<Object[]> rawSummaries = transactionRepo.getMonthlySummariesNative(principal.getId(), 1);
         List<MonthlySummary> summaries = rawSummaries.stream()
                 .map(row -> {
@@ -46,12 +42,15 @@ public class PredictionController {
                         throw new RuntimeException("Unexpected date type: " + row[0].getClass());
                     }
 
-                    return new MonthlySummary(
-                            date,
-                            ((Double) row[1])
-                    );
+                    return new MonthlySummary(date, ((Double) row[1]));
                 })
                 .toList();
+        if (summaries.size() < 3) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Not enough data to make a prediction. At least 3 months of data is required.");
+            error.put("monthsAvailable", summaries.size());
+            return ResponseEntity.badRequest().body(error);
+        }
 
         double[] totals = summaries.stream()
                 .mapToDouble(MonthlySummary::getTotal)
@@ -69,3 +68,4 @@ public class PredictionController {
         return ResponseEntity.ok(response);
     }
 }
+
