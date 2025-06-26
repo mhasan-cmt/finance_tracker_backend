@@ -1,5 +1,6 @@
 package com.fullStack.expenseTracker.repository;
 
+import com.fullStack.expenseTracker.dto.reponses.MonthlySummary;
 import com.fullStack.expenseTracker.dto.reponses.TransactionsMonthlySummaryDto;
 import com.fullStack.expenseTracker.enums.ETransactionType;
 import com.fullStack.expenseTracker.models.Transaction;
@@ -172,4 +173,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                 GROUP BY EXTRACT(YEAR FROM t.date)
             """, nativeQuery = true)
     List<Object[]> sumIncomeAndExpenseByYear(@Param("id") Long id, @Param("year") int year);
+
+
+    @Query("""
+            SELECT new com.fullStack.expenseTracker.dto.reponses.MonthlySummary(
+                FUNCTION('DATE_TRUNC', 'month', t.date), SUM(t.amount)
+            )
+            FROM Transaction t
+            WHERE t.user.id = :userId AND t.category.transactionType.transactionTypeId = :type
+            GROUP BY FUNCTION('DATE_TRUNC', 'month', t.date)
+            ORDER BY FUNCTION('DATE_TRUNC', 'month', t.date)
+            """)
+    List<MonthlySummary> getMonthlySummaries(
+            @Param("userId") Long userId,
+            @Param("type") Integer type);
 }
