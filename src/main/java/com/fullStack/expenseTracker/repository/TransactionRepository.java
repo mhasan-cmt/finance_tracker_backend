@@ -175,16 +175,15 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Object[]> sumIncomeAndExpenseByYear(@Param("id") Long id, @Param("year") int year);
 
 
-    @Query("""
-            SELECT new com.fullStack.expenseTracker.dto.reponses.MonthlySummary(
-                FUNCTION('DATE_TRUNC', 'month', t.date), SUM(t.amount)
-            )
-            FROM Transaction t
-            WHERE t.user.id = :userId AND t.category.transactionType.transactionTypeId = :type
-            GROUP BY FUNCTION('DATE_TRUNC', 'month', t.date)
-            ORDER BY FUNCTION('DATE_TRUNC', 'month', t.date)
-            """)
-    List<MonthlySummary> getMonthlySummaries(
-            @Param("userId") Long userId,
-            @Param("type") Integer type);
+    @Query(value = """
+                SELECT 
+                    DATE_TRUNC('month', t.date) AS month, 
+                    SUM(t.amount) AS total 
+                FROM transaction t
+                JOIN category c ON t.category_id = c.category_id
+                WHERE t.user_id = :userId AND c.transaction_type_id = :type
+                GROUP BY DATE_TRUNC('month', t.date)
+                ORDER BY DATE_TRUNC('month', t.date)
+            """, nativeQuery = true)
+    List<Object[]> getMonthlySummariesNative(@Param("userId") Long userId, @Param("type") Integer type);
 }
