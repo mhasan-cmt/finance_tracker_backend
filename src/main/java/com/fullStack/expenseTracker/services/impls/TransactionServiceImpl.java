@@ -12,7 +12,6 @@ import com.fullStack.expenseTracker.models.Transaction;
 import com.fullStack.expenseTracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +50,7 @@ public class TransactionServiceImpl implements TransactionService {
             );
 
         }catch(Exception e) {
-            log.error("Error happen when adding new transaction: " + e.getMessage());
+            log.error("Error happen when adding new transaction: {}", e.getMessage());
             throw new TransactionServiceLogicException("Failed to record your new transaction, Try again later!");
         }
 
@@ -112,7 +111,7 @@ public class TransactionServiceImpl implements TransactionService {
                     )
             );
         } catch (Exception e) {
-            log.error("Error happen when retrieving transactions of a user: " + e.getMessage());
+            log.error("Error happen when retrieving transactions of a user: {}", e.getMessage());
             throw new TransactionServiceLogicException("Failed to fetch your transactions! Try again later");
         }
 
@@ -157,7 +156,7 @@ public class TransactionServiceImpl implements TransactionService {
                     )
             );
         }catch(Exception e) {
-            log.error("Error happen when retrieving transactions of a user: " + e.getMessage());
+            log.error("Error happen when retrieving transactions of a user: {}", e.getMessage());
             throw new TransactionServiceLogicException("Failed to update your transactions! Try again later");
         }
 
@@ -176,7 +175,7 @@ public class TransactionServiceImpl implements TransactionService {
                         )
                 );
             }catch(Exception e) {
-                log.error("Error happen when retrieving transactions of a user: " + e.getMessage());
+                log.error("Error happen when retrieving transactions of a user: {}", e.getMessage());
                 throw new TransactionServiceLogicException("Failed to delete your transactions! Try again later");
             }
         }else {
@@ -223,7 +222,7 @@ public class TransactionServiceImpl implements TransactionService {
                     )
             );
         }catch (Exception e) {
-            log.error("Failed to fetch All transactions: " + e.getMessage());
+            log.error("Failed to fetch All transactions: {}", e.getMessage());
             throw new TransactionServiceLogicException("Failed to fetch All transactions: Try again later!");
         }
     }
