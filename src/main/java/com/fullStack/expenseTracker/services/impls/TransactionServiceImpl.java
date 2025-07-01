@@ -64,9 +64,9 @@ public class TransactionServiceImpl implements TransactionService {
                                                                    String sortDirec, String transactionType)
             throws TransactionServiceLogicException {
 
-        Sort.Direction direction = Sort.Direction.ASC;
-        if (sortDirec.equalsIgnoreCase("DESC")) {
-            direction = Sort.Direction.DESC;
+        Sort.Direction direction = Sort.Direction.DESC;
+        if (sortDirec.equalsIgnoreCase("ASC")) {
+            direction = Sort.Direction.ASC;
         }
 
         Pageable pageable =  PageRequest.of(pageNumber, pageSize).withSort(direction, sortField);
